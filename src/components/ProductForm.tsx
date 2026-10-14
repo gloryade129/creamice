@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { ImageUploader } from "@/components/ImageUploader";
 import { getCategories } from "@/lib/data/categories";
 import { createProduct, generateSlug } from "@/lib/data/products";
 import type { Product } from "@/lib/data/products";
@@ -25,8 +26,9 @@ interface FormVariant {
 
 interface FormImage {
   storage_path: string;
-  alt_text: string;
+  public_url: string;
   sort_order: number;
+  alt_text?: string;
 }
 
 interface FormData {
@@ -91,7 +93,8 @@ function createInitialFormData(initialData?: Product): FormData {
       : DEFAULT_SIZES.map((size) => ({ size, color: "", sku: "", stock: 0 })),
     images: (initialData.images || []).map((img) => ({
       storage_path: img.storage_path,
-      alt_text: img.alt_text,
+      public_url: img.storage_path ? `/api/storage/${img.storage_path}` : "",
+      alt_text: img.alt_text || "",
       sort_order: img.sort_order,
     })),
   };
@@ -157,20 +160,6 @@ export default function ProductForm({ initialData }: { initialData?: Product }) 
     }));
   };
 
-  const addImage = () => {
-    setFormData((prev) => ({
-      ...prev,
-      images: [...prev.images, { storage_path: "", alt_text: "", sort_order: prev.images.length }],
-    }));
-  };
-
-  const removeImage = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-  };
-
   const validate = (): string | null => {
     if (!formData.category_id) return "Category is required";
     if (!formData.name.trim()) return "Product name is required";
@@ -211,7 +200,7 @@ export default function ProductForm({ initialData }: { initialData?: Product }) 
         })),
         images: formData.images.filter((img) => img.storage_path.trim()).map((img) => ({
           storage_path: img.storage_path,
-          alt_text: img.alt_text,
+          alt_text: img.alt_text || "",
           sort_order: img.sort_order,
         })),
       });
@@ -379,44 +368,13 @@ export default function ProductForm({ initialData }: { initialData?: Product }) 
 
       <div className="border-t border-border pt-6">
         <h3 className="font-oswald font-semibold text-lg uppercase tracking-[0.02em] mb-4">Images</h3>
-        <p className="text-sm text-muted mb-4">Upload images to Supabase Storage first, then add paths here. First image is the main product image.</p>
-        <div className="space-y-3">
-          {formData.images.map((image, i) => (
-            <div key={i} className="grid grid-cols-12 gap-3">
-              <Input
-                value={image.storage_path}
-                onChange={(e) => handleImageChange(i, "storage_path", e.target.value)}
-                placeholder="product-images/abc123.webp"
-                label="Storage Path"
-              />
-              <Input
-                value={image.alt_text}
-                onChange={(e) => handleImageChange(i, "alt_text", e.target.value)}
-                placeholder="Black Hoodie front view"
-                label="Alt Text"
-              />
-              <Input
-                type="number"
-                value={image.sort_order}
-                onChange={(e) => handleImageChange(i, "sort_order", Number(e.target.value))}
-                placeholder="0"
-                label="Order"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => removeImage(i)}
-                className="text-error hover:text-error mt-10"
-              >
-                Remove
-              </Button>
-            </div>
-          ))}
-          <Button type="button" variant="secondary" size="sm" onClick={addImage}>
-            + Add Image
-          </Button>
-        </div>
+        <p className="text-sm text-muted mb-4">Upload product images. They will be auto-resized to 1600px WebP. First image is the main product image.</p>
+        <ImageUploader
+          value={formData.images}
+          onChange={(images) => setFormData((prev) => ({ ...prev, images }))}
+          productId=""
+          maxFiles={10}
+        />
       </div>
 
       <div className="flex gap-4 border-t border-border pt-6">
