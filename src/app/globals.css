@@ -88,3 +88,18 @@ h1, h2 {
   outline: 2px solid var(--color-gold);
   outline-offset: 2px;
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[shimmer_1\.5s_infinite\] {
+    animation: none;
+  }
+}
