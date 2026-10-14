@@ -7,3 +7,4 @@ export { Drawer } from "./Drawer";
 export { BottomSheet } from "./BottomSheet";
 export { ToastProvider, useToast } from "./Toast";
 export { Skeleton } from "./Skeleton";
+export { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./Card";
