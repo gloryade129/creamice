@@ -1,0 +1,200 @@
+# Creamice: Tech Stack and Architecture
+
+## 1. Stack
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Framework | Next.js (App Router) with TypeScript | Server rendering gives fast pages and good SEO. Widely known, so AI tools write it reliably. |
+| Styling | Tailwind CSS, with brand tokens as CSS variables | Small CSS, consistent design, easy to follow `DESIGN_SYSTEM.md`. |
+| Database, auth, file storage | Supabase (PostgreSQL, Supabase Auth, Storage) | One free service for all three. Real SQL for orders and money. |
+| Payments | Flutterwave Standard (hosted checkout) plus subaccount split | Card, transfer and USSD handled by Flutterwave. The commission split is built in. |
+| Hosting | See section 2. Decision needed before launch. | |
+| Validation | `zod` | One schema checks form input on client and server. |
+| Icons | `lucide-react` | Simple line icons. |
+| Fonts | Oswald and Montserrat through `next/font` | Self-hosted at build, no layout shift. |
+| Tests | Vitest for pure logic (money, commission, status rules) | The riskiest code is calculations; test those. |
+
+Dependency rule: add nothing else without asking the owner. No UI kits, no animation libraries, no state libraries (cart uses React context and localStorage). Pin exact versions in `package.json` and commit the lockfile. Use the latest stable versions when the project is created.
+
+## 2. "Everything must be free": what is true and what is not
+
+I checked the providers' current documentation on 14 October 2026. Re-check before launch because plans change.
+
+| Service | Free plan facts | What it means for Creamice |
+| --- | --- | --- |
+| Vercel | The Hobby plan is restricted to **non-commercial, personal use** ([Vercel Hobby plan](https://vercel.com/docs/plans/hobby)). | A store that takes payments is commercial use. Vercel Hobby is fine for building and previewing, but running the live store on it breaks Vercel's terms and the project can be paused. |
+| Supabase | Free: 500 MB database, 1 GB file storage, 5 GB egress, 50,000 monthly active users. **Free projects pause after 1 week of inactivity. No automatic backups.** Up to 2 active projects ([Supabase pricing](https://supabase.com/pricing.md)). | Enough for a launch. Use one project for development and one for production. Take weekly manual exports. Keep the dev project active or it pauses. Product images count towards the 5 GB egress, so compress them hard. |
+| Flutterwave | No monthly fee. A fee is taken on each transaction. | "Free" means no subscription, not no cost per sale. The fee is charged to the Creamice share (see section 6). |
+| Domain | Not free. It is paid yearly and the price depends on the registrar and the ending (.com, .ng and so on). | Without a domain, customers see a long `something.vercel.app` address, which hurts trust and sales, and order emails cannot be sent from your own address. Budget for this. |
+
+**Hosting decision (D-1), needed by 24 October.** Options:
+- **A. Vercel Pro** (paid, about 20 USD per month per developer seat at the time of writing). Simplest, fully permitted.
+- **B. A free host whose terms allow commercial use** (for example Netlify or Cloudflare, both of which can run Next.js). Cost is zero, but I could not read their current terms from here, so the owner must confirm commercial use is permitted on the free plan before choosing. Expect some extra setup.
+- **C. Stay on Vercel Hobby anyway.** Not recommended. Risk is the live store being suspended.
+
+To keep every option open, the code must stay host-neutral: no Vercel KV, Blob, Edge Config or other Vercel-only services, no `@vercel/analytics` dependency. Use standard Next.js features only.
+
+## 3. How the pieces connect
+
+```
+Customer's phone/laptop
+        |
+        v
+  Next.js app (host)  <----------------------------+
+   |  pages (server rendered)                       |
+   |  server actions / route handlers               |
+   |        |                  |                    |
+   |        v                  v                    |
+   |   Supabase           Flutterwave API           |
+   |   Postgres, Auth,    - create payment          |
+   |   Storage            - verify transaction      |
+   |        ^             - webhook  ---------------+
+   |        |
+   +--- Browser talks to Supabase ONLY for:
+        (1) login (Supabase Auth)
+        (2) reading public catalogue data (RLS allows it)
+```
+
+Key rule: the browser never reads or writes private data (orders, money, settings, profiles) directly. All of that goes through server code that first checks who the user is and what role they have, then uses the service role key.
+
+## 4. Project structure
+
+```
+src/
+  app/
+    (store)/                 public site
+      page.tsx               home
+      shop/page.tsx          listing, filters, search
+      category/[slug]/page.tsx
+      product/[slug]/page.tsx
+      cart/page.tsx
+      checkout/page.tsx
+      checkout/return/page.tsx    verifies payment on return
+      order/[orderNumber]/page.tsx
+      track/page.tsx
+      updates/page.tsx, updates/[slug]/page.tsx
+      (info pages: about, contact, delivery-returns, faq, privacy, terms)
+    login/page.tsx
+    dashboard/
+      layout.tsx             checks role, renders role-specific nav
+      admin/...              products, approvals, orders, shipping, discounts,
+                             updates, team, commission, settings
+      partner/...            products, orders
+      board/...              upcoming, updates
+    api/
+      checkout/route.ts      creates order + Flutterwave payment
+      webhooks/flutterwave/route.ts
+    sitemap.ts, robots.ts, not-found.tsx, error.tsx
+  components/
+    ui/                      Button, Input, Select, Badge, Modal, Drawer, Toast...
+    store/                   Header, Footer, ProductCard, ProductGallery, CartDrawer...
+    dashboard/               Sidebar, DataTable, StatusBadge, OrderTimeline...
+  lib/
+    supabase/                browser client, server client, admin (service role) client
+    auth/                    getCurrentUser, requireRole
+    data/                    ALL database reads/writes, one file per area
+    flutterwave/             createPayment, verifyTransaction, checkWebhook
+    money.ts                 kobo helpers, formatNaira, commission calc
+    orders.ts                allowed status transitions
+    cart/                    cart context + localStorage
+    validation/              zod schemas
+  styles/globals.css         brand tokens
+supabase/schema.sql
+docs/
+```
+
+Rules for structure: pages stay thin; business rules live in `lib/`; every database call lives in `lib/data/`, so permission rules are in one place; `lib/supabase/admin.ts` is imported only from server files.
+
+## 5. Authentication and roles
+
+- Supabase Auth with email and password. Staff only.
+- On sign-in, server code loads the user's `profiles` row. `requireRole(['admin'])` is called at the top of every dashboard page, server action and route handler. Hiding a menu item is not security.
+- Admin creates staff accounts with the Supabase admin API (`auth.admin.createUser`, email pre-confirmed, temporary password) and inserts the `profiles` row. This avoids depending on Supabase's built-in email sending, which is heavily limited on the free plan as far as I know. The admin shares the temporary password privately (for example on WhatsApp) and the user changes it after first login.
+- Passwords: minimum 10 characters. Turn on Supabase's leaked-password protection if the plan offers it. If time allows, enable TOTP two-factor for the admin account.
+- Deactivated users (`is_active = false`) are refused even if their session is still valid.
+
+Partner data safety: write `lib/data/partner-orders.ts` so it selects only `orders` columns and `order_items` columns *excluding* `unit_price_kobo`, and never touches `order_payments`. Add a test that fails if a partner order object contains any money field.
+
+## 6. Payments, step by step
+
+Read Flutterwave's current documentation before writing this code and follow it over anything written here from memory:
+- Standard payments: https://developer.flutterwave.com/docs/collecting-payments/standard
+- Split payments: https://developer.flutterwave.com/docs/collecting-payments/split-payments
+- Webhooks: https://developer.flutterwave.com/docs/webhooks (confirm the exact signature header and method there)
+
+### 6.1 One-time setup
+1. Owner completes Flutterwave business verification so live payments are allowed.
+2. In the Creamice Flutterwave dashboard, create a **subaccount** for the builder using the builder's bank details (dashboard or "create subaccount" endpoint). Copy the subaccount ID (starts with `RS_`).
+3. Admin pastes that ID into Dashboard, Settings, Builder subaccount. The builder's secret keys are never needed or stored.
+4. In Flutterwave Settings, Webhooks: set the URL to `https://<domain>/api/webhooks/flutterwave` and set a secret hash; put the same value in `FLW_SECRET_HASH`.
+
+### 6.2 Checkout (server, `api/checkout`)
+1. Validate the request with zod: items (variant id, quantity), customer details, state, optional discount code.
+2. Load variants and prices from the database. Reject sold-out or inactive items. Never use a price from the browser.
+3. Work out subtotal, discount, delivery fee (state rate or default), total. Work out commission: `round(commission_rate x (subtotal - discount))`, in kobo.
+4. Insert `orders` (status `pending_payment`), `order_items` (with price snapshot), `order_payments` (status `initiated`, unique `tx_ref`, commission snapshot).
+5. Call `POST https://api.flutterwave.com/v3/payments` with the secret key as a Bearer token. Amounts to Flutterwave are in naira (kobo divided by 100). Body:
+
+```json
+{
+  "tx_ref": "CRM-1001-8f3a2c",
+  "amount": 25500,
+  "currency": "NGN",
+  "redirect_url": "https://<domain>/checkout/return",
+  "customer": { "email": "...", "name": "...", "phonenumber": "..." },
+  "meta": { "order_number": "CRM-1001" },
+  "subaccounts": [
+    { "id": "RS_XXXXXXXX", "transaction_charge_type": "flat_subaccount", "transaction_charge": 4500 }
+  ]
+}
+```
+
+   `flat_subaccount` means the subaccount receives that fixed amount and Creamice receives the rest, with Flutterwave's fee coming out of Creamice's share ([split payments](https://developer.flutterwave.com/docs/collecting-payments/split-payments)). The builder therefore receives exactly the commission. If the commission is 0 or no subaccount is configured, omit `subaccounts`.
+6. Return the hosted link from the response (`data.link`). The browser redirects to it.
+
+### 6.3 Return page (`checkout/return`)
+Flutterwave redirects with `status`, `tx_ref`, `transaction_id` in the URL. These are untrusted. Server code must:
+1. Look up the order by `tx_ref`.
+2. Verify with Flutterwave using the transaction ID (verify endpoint, confirm exact path in the API reference).
+3. Accept only if the status is `successful`, the amount is at least the stored total, the currency is `NGN`, and the `tx_ref` matches.
+4. Call the database function `mark_order_paid(tx_ref, transaction_id)`.
+5. Show the real result: success, failed or still pending.
+
+### 6.4 Webhook (`api/webhooks/flutterwave`)
+1. Check the signature header against `FLW_SECRET_HASH`. Reject with 401 if it does not match.
+2. Ignore events that are not successful charges.
+3. Verify the transaction with the API exactly as in 6.3 (do not trust the webhook body).
+4. Call `mark_order_paid`. It is idempotent, so the return page and the webhook can both run safely in any order.
+5. Always answer 200 quickly once the signature is valid.
+
+### 6.5 Things that must be tested in Flutterwave test mode
+Successful payment, failed payment, abandoned payment, closing the page before returning (webhook must still complete the order), the webhook delivered twice, a tampered redirect URL, and the split amounts visible in the dashboard for the subaccount. Also test a payment above 10,000 NGN, because Flutterwave notes a stamp duty on larger amounts ([split payments](https://developer.flutterwave.com/docs/collecting-payments/split-payments)); confirm the builder's received amount is what is promised.
+
+## 7. Images
+
+1. Admin and partner uploads go through a form that resizes in the browser (max 1600 px on the long side, WebP, about 80 percent quality) before upload. Reject files over 5 MB before compression.
+2. Server code uploads to the public Supabase bucket `product-images` using the service role key, stores `storage_path` in `product_images`.
+3. Pages render images with `next/image` using correct `sizes`, a fixed aspect ratio (4:5) so nothing jumps, `priority` only on the first visible image.
+4. Delete the old file when an image is replaced.
+
+## 8. Cart
+
+React context plus localStorage, wrapped in try/catch (storage can be unavailable). Stores variant id, quantity and a display snapshot. On entering checkout the server re-reads real prices and stock; any difference is shown to the customer before they pay.
+
+## 9. SEO and sharing
+
+`generateMetadata` on every page; Open Graph image per product; `app/sitemap.ts` lists products, categories and updates; `app/robots.ts` blocks `/dashboard` and `/api`; JSON-LD `Product` on product pages; canonical URLs; filters that change listings use query strings and canonical points to the base page.
+
+## 10. Environments
+
+| Environment | Supabase project | Flutterwave keys | Notes |
+| --- | --- | --- | --- |
+| Local | `creamice-dev` | Test | `.env.local` |
+| Preview/staging | `creamice-dev` | Test | Safe place to try things |
+| Production | `creamice-prod` | Live | Only switched to live keys on launch day |
+
+The free plan allows two active projects, which is exactly dev and prod.
+
+## 11. Performance habits
+
+Server components by default, client components only where interaction needs them (cart, filters, forms, image upload). No client-side data fetching for catalogue pages. Cache catalogue reads and revalidate when products change. Fonts through `next/font`. No third-party scripts except GA4, loaded after interaction.
