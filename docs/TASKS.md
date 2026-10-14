@@ -26,7 +26,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 ## Part B: Build tasks
 
 ### Phase 1: Foundation (14 to 15 Oct)
-- [ ] T01 Create the Next.js project (TypeScript, Tailwind, App Router) inside this folder without deleting `docs/`, `supabase/`, `public/`, `AGENTS.md`. Set up lint, typecheck, Vitest scripts. Fill in the commands in `AGENTS.md`. Initialise git.
+- [x] T01 Create the Next.js project (TypeScript, Tailwind, App Router) inside this folder without deleting `docs/`, `supabase/`, `public/`, `AGENTS.md`. Set up lint, typecheck, Vitest scripts. Fill in the commands in `AGENTS.md`. Initialise git.
 - [ ] T02 Brand tokens in `globals.css`, Tailwind theme mapping, Oswald and Montserrat through `next/font`, reduced-motion rule. Add a temporary `/styleguide` page showing colours, type scale, buttons and fields.
 - [ ] T03 UI primitives: Button, Input, Select, Textarea, Badge, Drawer, BottomSheet, Toast, Skeleton. Keyboard and focus behaviour included.
 - [ ] T04 Create the Supabase `creamice-dev` project. Run `supabase/schema.sql`. Create the `product-images` bucket. Add env vars. Build the three Supabase clients (browser, server, admin) and a seed script for categories and the 37 shipping rows.
