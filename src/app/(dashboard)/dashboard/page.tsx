@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth/session";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
@@ -61,27 +62,27 @@ export default async function DashboardPage() {
             <CardTitle className="font-montserrat font-medium">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href="/dashboard/products/new"
               className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
             >
               <span className="font-montserrat font-medium">Add New Product</span>
               <p className="text-xs text-muted mt-0.5">Create a new product listing</p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/dashboard/orders"
               className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
             >
               <span className="font-montserrat font-medium">View Orders</span>
               <p className="text-xs text-muted mt-0.5">Manage and fulfill orders</p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/dashboard/team"
               className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
             >
               <span className="font-montserrat font-medium">Manage Team</span>
               <p className="text-xs text-muted mt-0.5">Add or edit team members</p>
-            </a>
+            </Link>
           </CardContent>
         </Card>
 

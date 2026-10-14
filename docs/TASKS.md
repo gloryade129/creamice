@@ -34,7 +34,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [x] T06 `lib/money.ts` (kobo helpers, naira formatting, commission calculation) and `lib/orders.ts` (allowed status transitions) with Vitest tests, including rounding and edge cases.
 
 ### Phase 2: Back office for products (16 to 17 Oct)
-- [ ] T07 Admin: product create and edit form with variants (size, colour, stock), categories, slug generation.
+- [x] T07 Admin: product create and edit form with variants (size, colour, stock), categories, slug generation.
 - [ ] T08 Image upload with in-browser resize to WebP, upload through the server, reorder and delete.
 - [ ] T09 Partner product flow and approval: partner creates and edits, changes go to pending, admin approval queue with reject note, stock edits immediate.
 - [ ] T10 Admin Team page: create account with temporary password, set role, deactivate.
