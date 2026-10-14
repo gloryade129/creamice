@@ -31,7 +31,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [x] T03 UI primitives: Button, Input, Select, Textarea, Badge, Drawer, BottomSheet, Toast, Skeleton. Keyboard and focus behaviour included.
 - [x] T04 Create the Supabase `creamice-dev` project. Run `supabase/schema.sql`. Create the `product-images` bucket. Add env vars. Build the three Supabase clients (browser, server, admin) and a seed script for categories and the 37 shipping rows.
 - [x] T05 Login page, `getCurrentUser`, `requireRole`, dashboard layout with role-based navigation (admin, partner, board). Create the first admin by hand.
-- [ ] T06 `lib/money.ts` (kobo helpers, naira formatting, commission calculation) and `lib/orders.ts` (allowed status transitions) with Vitest tests, including rounding and edge cases.
+- [x] T06 `lib/money.ts` (kobo helpers, naira formatting, commission calculation) and `lib/orders.ts` (allowed status transitions) with Vitest tests, including rounding and edge cases.
 
 ### Phase 2: Back office for products (16 to 17 Oct)
 - [ ] T07 Admin: product create and edit form with variants (size, colour, stock), categories, slug generation.
