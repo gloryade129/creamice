@@ -25,7 +25,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       lang="en"
       className={`${oswald.variable} ${montserrat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-jet-black text-off-white">{children}</body>
+      <body className="min-h-full flex flex-col bg-jet text-offwhite">{children}</body>
     </html>
   );
 }

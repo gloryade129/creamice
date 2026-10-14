@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-jet: #0B0B0B;
+  --color-gold: #C6A15B;
+  --color-offwhite: #F5F2EB;
+  --color-charcoal: #292929;
+
+  --color-surface: #161616;
+  --color-text: #F5F2EB;
+  --color-text-muted: #B3AEA3;
+  --color-border: #3A3A3A;
+  --color-border-strong: #6B665C;
+  --color-gold-hover: #D4B375;
+  --color-gold-pressed: #A98743;
+  --color-gold-dark: #7A5F26;
+  --color-text-muted-light: #5A564E;
+  --color-error: #E8786A;
+  --color-success: #6DBF8B;
+
+  --radius: 4px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-jet: var(--color-jet);
+  --color-gold: var(--color-gold);
+  --color-offwhite: var(--color-offwhite);
+  --color-charcoal: var(--color-charcoal);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-gold-hover: var(--color-gold-hover);
+  --color-gold-pressed: var(--color-gold-pressed);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-text-muted-light: var(--color-text-muted-light);
+  --color-error: var(--color-error);
+  --color-success: var(--color-success);
+
+  --radius: var(--radius);
+  --ease: var(--ease);
+  --dur-fast: var(--dur-fast);
+  --dur-base: var(--dur-base);
+
+  --font-oswald: var(--font-oswald);
+  --font-montserrat: var(--font-montserrat);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-jet);
+  color: var(--color-text);
+  font-family: var(--font-montserrat), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-oswald), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1, h2 {
+  text-transform: uppercase;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
 }
