@@ -36,7 +36,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 ### Phase 2: Back office for products (16 to 17 Oct)
 - [x] T07 Admin: product create and edit form with variants (size, colour, stock), categories, slug generation.
 - [x] T08 Image upload with in-browser resize to WebP, upload through the server, reorder and delete.
-- [ ] T09 Partner product flow and approval: partner creates and edits, changes go to pending, admin approval queue with reject note, stock edits immediate.
+- [x] T09 Partner product flow and approval: partner creates and edits, changes go to pending, admin approval queue with reject note, stock edits immediate.
 - [ ] T10 Admin Team page: create account with temporary password, set role, deactivate.
 
 ### Phase 3: Storefront (18 to 19 Oct)
