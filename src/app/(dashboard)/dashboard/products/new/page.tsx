@@ -1,8 +1,15 @@
 import { requireRole } from "@/lib/auth/session";
+import { getCategories } from "@/lib/data/categories";
+import { getStoreSettings } from "@/lib/data/settings";
 import ProductForm from "@/components/ProductForm";
 
 export default async function NewProductPage() {
-  await requireRole(["admin", "partner"]);
+  const user = await requireRole(["admin", "partner"]);
+
+  const [categories, settings] = await Promise.all([
+    getCategories(),
+    getStoreSettings(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -10,9 +17,13 @@ export default async function NewProductPage() {
         <h1 className="font-oswald font-semibold text-2xl uppercase tracking-[0.02em]">
           New Product
         </h1>
-        <p className="text-muted mt-1">Create a new product with variants and images.</p>
+        <p className="text-muted mt-1">Create a new product with sizes, stock and images.</p>
       </div>
-      <ProductForm />
+      <ProductForm
+        categories={categories}
+        role={user.role}
+        approvalRequired={settings.require_product_approval}
+      />
     </div>
   );
 }

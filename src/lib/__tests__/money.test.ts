@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   koboToNaira,
   nairaToKobo,
+  koboToNairaInput,
+  nairaStringToKobo,
   formatNaira,
   formatNairaWithSign,
   calculateCommission,
@@ -107,6 +109,43 @@ describe("money helpers", () => {
 
     it("never returns negative", () => {
       expect(subtractKobo(100, 200)).toBe(0);
+    });
+  });
+
+  describe("koboToNairaInput", () => {
+    it("renders whole naira without decimals", () => {
+      expect(koboToNairaInput(250000)).toBe("2500");
+      expect(koboToNairaInput(0)).toBe("0");
+    });
+
+    it("keeps kobo that nairaToKobo would round away", () => {
+      expect(koboToNairaInput(2500050)).toBe("25000.50");
+      expect(koboToNairaInput(2500001)).toBe("25000.01");
+    });
+  });
+
+  describe("nairaStringToKobo", () => {
+    it("parses plain naira text as integer kobo", () => {
+      expect(nairaStringToKobo("25000")).toBe(2500000);
+      expect(nairaStringToKobo("0")).toBe(0);
+    });
+
+    it("parses kobo decimals exactly", () => {
+      expect(nairaStringToKobo("25000.50")).toBe(2500050);
+      expect(nairaStringToKobo("25000.5")).toBe(2500050);
+      expect(nairaStringToKobo("0.01")).toBe(1);
+    });
+
+    it("has no float drift", () => {
+      expect(nairaStringToKobo("19.99")).toBe(1999);
+      expect(nairaStringToKobo("0.07")).toBe(7);
+    });
+
+    it("rejects malformed amounts", () => {
+      expect(() => nairaStringToKobo("25,000")).toThrow();
+      expect(() => nairaStringToKobo("25000.123")).toThrow();
+      expect(() => nairaStringToKobo("-5")).toThrow();
+      expect(() => nairaStringToKobo("")).toThrow();
     });
   });
 });

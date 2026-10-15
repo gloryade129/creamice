@@ -11,6 +11,7 @@ import {
   FileText,
   BarChart2,
   LogOut,
+  ClipboardCheck,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ const navigation = {
   admin: [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/products", label: "Products", icon: Package },
+    { href: "/dashboard/products/approval", label: "Approval Queue", icon: ClipboardCheck },
     { href: "/dashboard/orders", label: "Orders", icon: ShoppingBag },
     { href: "/dashboard/team", label: "Team", icon: Users },
     { href: "/dashboard/shipping", label: "Shipping", icon: FileText },
@@ -26,7 +28,7 @@ const navigation = {
     { href: "/dashboard/commission", label: "Commission", icon: BarChart2 },
   ],
   partner: [
-    { href: "/dashboard", label: "My Products", icon: Package },
+    { href: "/dashboard/products", label: "My Products", icon: Package },
     { href: "/dashboard/orders", label: "Orders", icon: ShoppingBag },
   ],
   board: [

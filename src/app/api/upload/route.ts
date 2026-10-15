@@ -1,7 +1,12 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireRole } from "@/lib/auth/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
+  // Outside the try: requireRole redirects, and the catch must not turn that
+  // redirect into a 500.
+  await requireRole(["admin", "partner"]);
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -71,12 +76,18 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  await requireRole(["admin", "partner"]);
+
   try {
     const { searchParams } = new URL(request.url);
     const storagePath = searchParams.get("path");
 
     if (!storagePath) {
       return NextResponse.json({ error: "No path provided" }, { status: 400 });
+    }
+    // Only files in our own folder can be targeted by the path parameter.
+    if (!storagePath.startsWith("product-images/") || storagePath.includes("..")) {
+      return NextResponse.json({ error: "Invalid path" }, { status: 400 });
     }
 
     const supabase = createAdminClient();
