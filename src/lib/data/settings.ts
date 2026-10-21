@@ -23,6 +23,31 @@ const DEFAULT_SETTINGS: StoreSettings = {
   builder_subaccount_id: null,
 };
 
+export interface PublicSiteLinks {
+  whatsapp_number: string | null;
+  whatsapp_channel_url: string | null;
+}
+
+// Footer links for the public storefront. Selects only the public columns:
+// the settings row also holds the commission rate and the builder
+// subaccount, which must never be fetched by a public page.
+export async function getPublicSiteLinks(): Promise<PublicSiteLinks> {
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("store_settings")
+      .select("whatsapp_number, whatsapp_channel_url")
+      .single();
+    if (error || !data) return { whatsapp_number: null, whatsapp_channel_url: null };
+    return {
+      whatsapp_number: data.whatsapp_number ?? null,
+      whatsapp_channel_url: data.whatsapp_channel_url ?? null,
+    };
+  } catch {
+    return { whatsapp_number: null, whatsapp_channel_url: null };
+  }
+}
+
 export async function getStoreSettings(): Promise<StoreSettings> {
   try {
     const supabase = createAdminClient();

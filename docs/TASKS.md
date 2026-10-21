@@ -40,8 +40,8 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [ ] T10 Admin Team page: create account with temporary password, set role, deactivate.
 
 ### Phase 3: Storefront (18 to 19 Oct)
-- [ ] T11 Header, footer, mobile menu drawer, search field.
-- [ ] T12 Home page.
+- [x] T11 Header, footer, mobile menu drawer, search field.
+- [x] T12 Home page.
 - [ ] T13 Shop and category listings with filters, sort, pagination, search results, empty states.
 - [ ] T14 Product page with gallery, size selector, stock state, share on WhatsApp, structured data.
 - [ ] T15 Cart: context with localStorage, drawer, `/cart` page.
