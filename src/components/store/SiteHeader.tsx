@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   HelpCircle,
   Menu,
+  MessageCircle,
   PackageSearch,
   Search,
   ShoppingBag,
@@ -32,9 +33,13 @@ const infoLinks = [
 
 interface SiteHeaderProps {
   categories: HeaderCategory[];
+  whatsappChannelUrl?: string | null;
 }
 
-export function SiteHeader({ categories }: SiteHeaderProps) {
+export function SiteHeader({
+  categories,
+  whatsappChannelUrl,
+}: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
@@ -54,26 +59,40 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
     <header className="sticky top-0 z-40 bg-surface">
       {/* Utility strip: the one black band above the fold. */}
       <div className="bg-[#0B0B0B] text-[#F5F2EB]">
-        <div className="container-page flex h-9 items-center justify-between gap-4 text-[11px] tracking-[0.02em] sm:text-xs">
-          <p className="truncate">
+        <div className="container-page flex h-11 items-center justify-between gap-3 text-[11px] tracking-[0.02em] sm:text-xs">
+          <p className="min-w-0 flex-1 truncate">
             Delivery across Nigeria <span className="text-[#C6A15B]">·</span> Secure
             payment by Flutterwave
           </p>
-          <div className="hidden items-center gap-5 sm:flex">
-            <Link
-              href="/track"
-              className="inline-flex items-center gap-1.5 text-[#D8D2C6] transition-colors hover:text-white"
-            >
-              <PackageSearch className="h-3.5 w-3.5" aria-hidden="true" />
-              Track order
-            </Link>
-            <Link
-              href="/faq"
-              className="inline-flex items-center gap-1.5 text-[#D8D2C6] transition-colors hover:text-white"
-            >
-              <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              Help
-            </Link>
+          <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-5">
+            {whatsappChannelUrl ? (
+              <a
+                href={whatsappChannelUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-[#D8D2C6] transition-colors hover:text-white"
+                aria-label="Creamice WhatsApp Channel"
+              >
+                <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden sm:inline">WhatsApp Channel</span>
+              </a>
+            ) : null}
+            <div className="hidden items-center gap-5 sm:flex">
+              <Link
+                href="/track"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-[#D8D2C6] transition-colors hover:text-white"
+              >
+                <PackageSearch className="h-3.5 w-3.5" aria-hidden="true" />
+                Track order
+              </Link>
+              <Link
+                href="/faq"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-[#D8D2C6] transition-colors hover:text-white"
+              >
+                <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                Help
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,14 @@
 Newest entry first. After each task, add: date, task number, what changed, what is left, anything the owner must do.
 
 ## 2026-10-21
+- T25 public updates archive and admin posting:
+  - Admin: `/dashboard/updates` lists public posts with draft/published status; `/dashboard/updates/new` and `/dashboard/updates/[id]` create and edit. Publishing, unpublishing and editing are separate actions with role checks, zod validation and revalidation. Drafts never reach the storefront.
+  - Slugs: generated on the server from the title (`lib/updates.ts`), de-duplicated with a numeric suffix, and kept stable when a post is edited. A published post keeps its first publication date if it is unpublished and later re-published.
+  - Public: `/updates` lists published posts newest first, with an empty state; `/updates/[slug]` shows the full plain-text body. Copy is rendered as text, not HTML. The home page now shows the latest three posts instead of a permanent empty block.
+  - WhatsApp: the header utility strip shows a WhatsApp Channel link when `store_settings.whatsapp_channel_url` is set; the footer already had one. The strip is now 44 px high so the link meets the touch-target rule.
+  - Checks: typecheck, lint (0 problems), 147 Vitest tests and production build pass. Browser check at 555 px: created and published a temporary update, saw it on `/updates`, its detail page and the home page; edited it, unpublished it and confirmed it disappeared; temporarily set a Channel URL and confirmed two 44 px links, then restored the setting to empty. The temporary update was deleted.
+  - Owner must: set the WhatsApp Channel URL in Dashboard, Settings, and add the real announcement text. No updates exist yet.
+  - Next: T26 discount codes (optional) or the information pages and quality passes.
 - T22-T24 admin and partner order desk, overview and commission:
   - Data split: `lib/data/partner-orders.ts` is the only order read path for partners. It selects no `unit_price_kobo`, totals, payments or commission, and excludes `pending_payment` from both the list and direct detail links. `lib/data/orders.ts` is the admin read model (payment snapshot, item prices, totals). A test checks the partner column strings for money fields.
   - Orders list: `/dashboard/orders` is role-aware, with search, status and needs-attention filters, an unpaid-expiry action for admins and a money-free partner card. Detail pages show customer, delivery, items and history. Admin actions are limited by `canTransition`; partner actions are fulfil-only. A manual "mark paid" is rejected; payment can only arrive through verified Flutterwave code. Every change writes an `order_events` row, and the update is guarded against a stale status.

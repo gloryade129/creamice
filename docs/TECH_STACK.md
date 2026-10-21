@@ -83,7 +83,8 @@ src/
       orders/page.tsx        role-aware list (admin sees money, partner does not)
       orders/[id]/page.tsx   role-aware detail and guarded status actions
       commission/page.tsx    admin monthly commission report
-      shipping, discounts, updates, team, settings
+      shipping, discounts, team, settings
+      updates/...            public archive admin: list, new, edit, publish
     api/
       checkout/route.ts      creates order + Flutterwave payment
       checkout/quote/route.ts  server prices for the checkout summary
@@ -101,6 +102,7 @@ src/
     data/                    ALL database reads/writes, one file per area
       partner-orders.ts      partner-safe order columns and queries (no money)
       orders.ts              admin order reads (payment, commission, totals)
+      updates.ts             public/admin update reads and writes
       reports.ts             overview counts, monthly commission report
     flutterwave.ts           createPayment, verifyTransaction, checkWebhook
     email/                   Brevo customer receipt + seller alert
@@ -108,6 +110,7 @@ src/
     money.ts                 kobo helpers, formatNaira, commission calc
     orders.ts                allowed status transitions
     reports.ts               Lagos day/month ranges, CSV and decimal formatting
+    updates.ts               update slugs, excerpts and date formatting
     cart/                    cart context + localStorage
     validation/              zod schemas
   styles/globals.css         brand tokens

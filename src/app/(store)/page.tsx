@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { getCategories } from "@/lib/data/categories";
 import { getHomeCatalogue } from "@/lib/data/storefront";
+import { getPublicUpdates } from "@/lib/data/updates";
 import { fallbackCategories } from "@/lib/demo-data";
+import { excerptFromBody, formatUpdateDate } from "@/lib/updates";
 import { ProductCard } from "@/components/store/ProductCard";
 import {
   PreviewNotice,
@@ -68,7 +70,8 @@ export default async function HomePage() {
     categories = fallbackCategories;
   }
 
-  const { newArrivals, featured, usingDemo } = await getHomeCatalogue();
+  const [{ newArrivals, featured, usingDemo }, latestUpdates] =
+    await Promise.all([getHomeCatalogue(), getPublicUpdates(3)]);
 
   return (
     <div>
@@ -311,18 +314,51 @@ export default async function HomePage() {
             title="Latest updates"
             href="/updates"
           />
-          <div className="rounded-xl border border-dashed border-border-strong bg-charcoal px-6 py-10 text-center">
-            <p className="text-sm text-muted">
-              No updates yet. New drops and announcements will appear here.
-            </p>
-            <Link
-              href="/updates"
-              className="mt-3 inline-flex min-h-[44px] items-center gap-1 text-sm font-semibold text-offwhite hover:text-gold-ink"
-            >
-              Visit updates
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
+          {latestUpdates.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border-strong bg-charcoal px-6 py-10 text-center">
+              <p className="text-sm text-muted">
+                No updates yet. New drops and announcements will appear here.
+              </p>
+              <Link
+                href="/updates"
+                className="mt-3 inline-flex min-h-[44px] items-center gap-1 text-sm font-semibold text-offwhite hover:text-gold-ink"
+              >
+                Visit updates
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          ) : (
+            <ul className="grid gap-4 md:grid-cols-3">
+              {latestUpdates.map((update) => (
+                <li key={update.id}>
+                  <Link
+                    href={`/updates/${update.slug}`}
+                    className="group flex h-full flex-col rounded-xl border border-border bg-charcoal p-5 transition-colors hover:border-border-strong"
+                  >
+                    <time
+                      dateTime={update.publishedAt}
+                      className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted"
+                    >
+                      {formatUpdateDate(update.publishedAt)}
+                    </time>
+                    <h3 className="mt-2 font-oswald text-lg font-medium uppercase leading-tight tracking-[0.02em] text-offwhite transition-colors group-hover:text-gold-ink">
+                      {update.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">
+                      {excerptFromBody(update.body, 140)}
+                    </p>
+                    <span className="mt-auto inline-flex min-h-[44px] items-center gap-1 pt-3 text-sm font-semibold text-offwhite">
+                      Read update
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </div>

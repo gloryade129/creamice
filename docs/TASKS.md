@@ -62,7 +62,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [x] T24 Admin Overview and Commission report with CSV export.
 
 ### Phase 6: Launch extras (24 Oct; stop here if behind)
-- [ ] T25 Updates archive: admin posting, public `/updates`, WhatsApp Channel link in header strip and footer.
+- [x] T25 Updates archive: admin posting, public `/updates`, WhatsApp Channel link in header strip and footer. Admin can draft, publish, edit and unpublish; public pages read published posts only.
 - [ ] T26 Discount codes: admin page, checkout validation, usage count.
 - [ ] T27 Board area: upcoming products, board-only updates.
 
