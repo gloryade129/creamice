@@ -42,9 +42,9 @@ Review each result yourself before moving on. Commit after every task with a cle
 ### Phase 3: Storefront (18 to 19 Oct)
 - [x] T11 Header, footer, mobile menu drawer, search field.
 - [x] T12 Home page.
-- [ ] T13 Shop and category listings with filters, sort, pagination, search results, empty states.
-- [ ] T14 Product page with gallery, size selector, stock state, share on WhatsApp, structured data.
-- [ ] T15 Cart: context with localStorage, drawer, `/cart` page.
+- [x] T13 Shop and category listings with filters, sort, pagination, search results, empty states.
+- [x] T14 Product page with gallery, size selector, stock state, share on WhatsApp, structured data.
+- [x] T15 Cart: context with localStorage, drawer, `/cart` page.
 
 ### Phase 4: Checkout and payments (20 to 21 Oct)
 - [ ] T16 Admin Shipping page (default fee and per-state fees) and Settings page (store details, WhatsApp links, approval switch, commission rate, builder subaccount).

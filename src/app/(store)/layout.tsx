@@ -22,7 +22,13 @@ export default async function StoreLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-jet text-offwhite">
+    <div className="flex min-h-screen flex-col bg-jet text-offwhite">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-jet focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-offwhite focus:ring-2 focus:ring-gold"
+      >
+        Skip to content
+      </a>
       <SiteHeader categories={categories} />
       <main id="main" className="flex-1">
         {children}

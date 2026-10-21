@@ -1,270 +1,159 @@
-# Creamice: Design System
+# Creamice: Design Direction
 
-Source: `docs/reference/Creamice_Brand_Guidelines.pdf` (colours and fonts below are taken from it exactly). Anything marked "derived" is a supporting value added for usability and is not in the brand guide.
+Status: **current**. This replaces the earlier dark editorial direction. The brand
+guidelines still supply the logo, the name and the black / gold / white palette;
+they no longer dictate layout, typography scale or surface treatment.
 
-## 1. Direction
+## 1. Two themes, one brand
 
-Simple, dark, confident. Think of a clean marketplace layout (Jumia-style: search up top, clear categories, dense and readable product grids, obvious prices and buttons) in Creamice black and gold.
+| Area | Theme | Why |
+| --- | --- | --- |
+| Storefront (`/`, `/shop`, `/product`, `/cart`, `/checkout`) | **Light** | People buy on familiar ground. A bright marketplace reads faster, photographs better and feels trustworthy. |
+| Dashboard (`/dashboard`, `/login`) | **Dark** | The team works in it for hours. Dark surfaces reduce glare and make status colour and money figures stand out. |
 
-Do:
-- Plain layouts, generous spacing, strong type, real product photos.
-- Gold only on the thing that matters most in a view (the main button, a selected state, a key link).
-- Borders and spacing to separate things.
-
-Do not:
-- No emojis anywhere (UI, copy, alt text, placeholders).
-- No gradients. No glows, no blurs, no glassmorphism, no drop shadows on cards.
-- No decorative gold lines, flourishes or ornamental dividers.
-- No stock-template look: no oversized rounded cards, no purple, no random illustration.
-- No auto-playing carousels, marquees, parallax or scroll effects.
+The storefront is a **clean marketplace**: search first, dense but breathable
+grids, obvious prices, one clear action per block. Think Jumia's clarity with
+the restraint of a modern fashion retailer. It is not an editorial site, not a
+lookbook, and not a clone of a template.
 
 ## 2. Colour
 
-### Brand colours (from the guide)
-| Name | Hex | Role |
+The palette is black, gold and white. Both themes share the same token names so
+one component works in either theme; the values swap per scope.
+
+### Storefront (light)
+
+| Token | Value | Use |
 | --- | --- | --- |
-| Jet Black | `#0B0B0B` | Dominant background across the site |
-| Metallic Gold | `#C6A15B` | Accents, primary buttons, highlights, selected states |
-| Off-White | `#F5F2EB` | Main text on dark, light sections, product image backdrops |
-| Charcoal Grey | `#292929` | Raised surfaces, inputs, hover backgrounds |
+| `jet` (canvas) | `#FFFFFF` | Page background |
+| `surface` | `#FFFFFF` | Cards, header, forms |
+| `charcoal` (soft) | `#F6F3EC` | Image backdrops, quiet panels, hover rows |
+| `offwhite` (ink) | `#121212` | Body text and headings |
+| `muted` | `#6A6A6A` | Secondary text, meta, placeholders |
+| `border` | `#E7E2D7` | Dividers and card outlines |
+| `border-strong` | `#CFC8B9` | Form outlines |
+| `gold` | `#C6A15B` | Primary buttons, badges, focus ring |
+| `gold-ink` | `#7C5F27` | Gold *text* on light (accessible) |
+| `error` / `success` | `#B42318` / `#067647` | Validation and status |
 
-### Derived tokens
-| Name | Hex | Use |
+Rules:
+- Gold is an accent, not a background wash. At most one gold-filled button per viewport.
+- Never set gold `#C6A15B` as small text on white. Use `gold-ink` for text, `gold` for fills and borders.
+- Prices are ink, not gold. A struck-through compare price is muted.
+- Sale / New / Sold out badges are black, gold or soft-cream chips with dark text.
+
+### Dashboard (dark)
+
+| Token | Value | Use |
 | --- | --- | --- |
-| Surface | `#161616` | Cards and panels on Jet Black |
-| Text muted | `#B3AEA3` | Secondary text on dark |
-| Border | `#3A3A3A` | Dividers, card outlines |
-| Border strong | `#6B665C` | Input outlines (needs to be clearly visible) |
-| Gold hover | `#D4B375` | Primary button hover |
-| Gold pressed | `#A98743` | Primary button pressed |
-| Gold dark | `#7A5F26` | Gold-toned text on light backgrounds only |
-| Text muted on light | `#5A564E` | Secondary text on Off-White |
-| Error | `#E8786A` | Errors, cancelled |
-| Success | `#6DBF8B` | Delivered, success messages |
+| `jet` | `#0B0B0B` | Canvas |
+| `surface` | `#141414` | Cards, sidebar, top bar |
+| `charcoal` | `#1E1E1E` | Row hover, inputs, nested panels |
+| `offwhite` | `#F5F2EB` | Text |
+| `muted` | `#A7A199` | Secondary text |
+| `border` | `#262626` | Dividers |
+| `border-strong` | `#3A3A3A` | Form outlines |
+| `gold` | `#C6A15B` | Active nav, primary action, focus |
 
-### Checked contrast (WCAG ratios, computed)
-| Pair | Ratio | Passes |
-| --- | --- | --- |
-| Off-White on Jet Black | 17.6 | AA, AAA |
-| Off-White on Surface | 16.2 | AA, AAA |
-| Off-White on Charcoal | 13.0 | AA, AAA |
-| Text muted on Jet Black | 8.9 | AA, AAA |
-| Text muted on Charcoal | 6.6 | AA |
-| Gold on Jet Black | 8.1 | AA, AAA |
-| Gold on Charcoal | 6.0 | AA |
-| Jet Black text on Gold (buttons) | 8.1 | AA, AAA |
-| Jet Black text on Gold hover | 9.9 | AA, AAA |
-| Text muted on light on Off-White | 6.5 | AA |
-| Gold dark on Off-White | 5.4 | AA |
-| Error on Jet Black | 6.9 | AA |
-| Success on Jet Black | 8.9 | AA |
-| **Gold on Off-White** | **2.2** | **Fails. Never put gold text or icons on a light background.** |
-| Border `#3A3A3A` on Jet Black | 1.7 | Decorative only. Inputs use Border strong (3.2). |
+### Footer
+The storefront footer is the one large black block in the light theme. It closes
+the page and carries the brand. Off-white text, gold only for the wordmark and
+hover states.
 
-### Tokens in code (`src/styles/globals.css`)
-```css
-:root {
-  --color-jet: #0B0B0B;
-  --color-gold: #C6A15B;
-  --color-offwhite: #F5F2EB;
-  --color-charcoal: #292929;
+## 3. Type
 
-  --color-surface: #161616;
-  --color-text: #F5F2EB;
-  --color-text-muted: #B3AEA3;
-  --color-border: #3A3A3A;
-  --color-border-strong: #6B665C;
-  --color-gold-hover: #D4B375;
-  --color-gold-pressed: #A98743;
-  --color-gold-dark: #7A5F26;
-  --color-text-muted-light: #5A564E;
-  --color-error: #E8786A;
-  --color-success: #6DBF8B;
+- **Oswald** — display only: the wordmark, hero headline, section titles, dashboard numbers. Uppercase, tight tracking. Never for body copy.
+- **Montserrat** — everything else: navigation, product names, prices, buttons, forms, tables. Weights 400 / 500 / 600 / 700.
+- Load through `next/font` only. No additional families.
 
-  --radius: 4px;
-  --ease: cubic-bezier(0.2, 0, 0, 1);
-  --dur-fast: 150ms;
-  --dur-base: 200ms;
-}
-```
-Map these in the Tailwind theme (`bg-jet`, `text-offwhite`, `bg-gold`, and so on). Do not use raw hex values in components.
+Scale (desktop / mobile):
+- Hero `clamp(2.25rem, 5vw, 4rem)` / line-height 1.02
+- Section title 28 / 22 px, Oswald 600, uppercase
+- Card title 15–16 px, Montserrat 500
+- Body 15–16 px, line-height 1.6
+- Meta and labels 12–13 px
+- Dashboard metric 30–36 px Oswald 600, tabular numbers
 
-## 3. Typography
+## 4. Layout and surfaces
 
-| Use | Font | Weight | Notes |
-| --- | --- | --- | --- |
-| Headings, hero, product titles, promotional text | Oswald | 500 or 600 | Uppercase for H1 and H2, letter-spacing 0.02em. Product titles in normal case. |
-| Body, navigation, buttons, forms, descriptions, prices | Montserrat | 400, 500, 600 | Prices 600 with tabular numbers. |
+- Content width: `1240 px` maximum, `16 px` mobile gutters, `24 px` tablet, `32 px` desktop.
+- Radii: `8 px` controls, `12 px` cards, `16 px` large panels. Pills only for chips and the search field.
+- Borders do the separating. Shadows are subtle and only on hover or floating layers (`0 8px 24px rgb(0 0 0 / 0.08)` light, `0 8px 24px rgb(0 0 0 / 0.4)` dark).
+- No gradients, glows, glassmorphism, marquees, parallax or auto-playing carousels.
+- Sections alternate white and soft cream. The black promo band and footer are the only large dark blocks in the storefront.
 
-Load both with `next/font/google`, subset `latin`, `display: swap`. Do not load other weights.
-
-| Style | Mobile | Desktop |
-| --- | --- | --- |
-| Display (hero) | 36/40 | 56/60 |
-| H1 | 30/36 | 40/44 |
-| H2 | 24/28 | 30/36 |
-| H3 | 20/24 | 22/28 |
-| Body | 16/26 | 16/26 |
-| Small | 14/22 | 14/22 |
-| Label (buttons, tags) | 14, weight 600, uppercase, letter-spacing 0.04em | same |
-
-Minimum text size is 14 px, except tiny tags at 12 px that never carry essential information. Maximum line length for reading text is about 70 characters.
-
-Naira: format with `Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 })`. Check that the naira sign (₦) renders in both fonts on a real Android phone; if it falls back to a different font and looks wrong, show "NGN 25,000" instead.
-
-## 4. Layout
-
-- Mobile first. Breakpoints: `sm` 640, `md` 768, `lg` 1024, `xl` 1280.
-- Container: max width 1200 px, side padding 16 px (mobile), 24 px (md), 32 px (lg).
-- Spacing scale (4 px base): 4, 8, 12, 16, 24, 32, 48, 64, 96. Section spacing 48 px mobile, 80 px desktop.
-- Product grid: 2 columns (mobile), 3 (md), 4 (lg). Gap 12 px mobile, 24 px desktop.
-- Product images: 4:5 ratio, `object-fit: cover`, on an Off-White or Charcoal backdrop; one backdrop style across the whole catalogue.
-- Radius: 4 px everywhere. Badges 2 px. No pills.
-- Elevation: none. Use borders. Overlays (drawer, sheet, modal) use a Jet Black scrim at 60 percent.
-- Sections alternate between Jet Black and Surface. Use an Off-White section at most once or twice per page for contrast (for example the trust row).
-
-## 5. Components
-
-### Buttons
-| Variant | Look | Use |
-| --- | --- | --- |
-| Primary | Gold fill, Jet Black text. Hover Gold hover. Pressed Gold pressed. | One per view area: Add to cart, Pay, Shop now |
-| Secondary | Transparent, 1 px Off-White border, Off-White text. Hover Charcoal fill. | Second actions |
-| Ghost | No border, Off-White text, underline on hover | Links and low-priority actions |
-| Danger | Transparent, Error border and text | Cancel order, delete |
-
-Height 48 px (44 px in dense dashboard tables), horizontal padding 24 px, full width on mobile forms. Disabled: 40 percent opacity and `not-allowed`. Loading: label changes to "Please wait" and the button is disabled; no spinners that spin forever.
-
-### Form fields
-Height 48 px, Charcoal background, 1 px Border strong, 4 px radius. Label above the field, always visible (no placeholder-only labels). Focus: 2 px Gold outline with 2 px offset. Error: Error-coloured border plus message text below ("Enter a valid phone number"). Use proper `type`, `inputmode` and `autocomplete`.
-
-### Size chips
-44 x 44 px minimum, 1 px Border strong, Off-White text. Selected: Gold fill, Jet Black text. Sold out: 40 percent opacity, diagonal strike line, not selectable, labelled for screen readers as "sold out".
-
-### Product card
-Image (4:5), name (Oswald, 2 lines max), price (Montserrat 600), compare-at price struck through in muted text, "Sold out" or "New" label top-left of the image (Charcoal fill, Off-White text). Whole card is one link. Hover: image scales to 1.03 over 200 ms. No quick-view, no hover buttons.
+## 5. Storefront components
 
 ### Header
-Jet Black, 1 px bottom border. Mobile: menu button, centred logo, search icon, cart icon with count. Desktop: logo, wide search field, cart; category links in a second row. Cart count uses a Gold badge with Jet Black text.
+1. **Utility strip** (`#0B0B0B`, 36 px): "Delivery across Nigeria · Secure payment by Flutterwave" left; "Track order" and "Help" right.
+2. **Main bar** (white, 72–80 px): wordmark left; wide search in the middle with a black submit button; cart with count right. Mobile: menu, wordmark, search toggle, cart.
+3. **Category bar** (white, 44 px, bottom border): "Shop all" then category links. Horizontal scroll on mobile, no wrapping.
+4. Sticky on scroll. No hide-on-scroll animation.
 
-### Drawer and bottom sheet
-Drawer (menu, cart) slides in from the side in 200 ms. Filter sheet slides up from the bottom on mobile. Close on scrim click and Escape; trap focus inside; restore focus on close.
+### Product card
+- 4:5 image on soft cream, object-cover when a photo exists, category glyph when it does not.
+- Whole card is a link. Quick-add button is a separate control and must stop propagation.
+- Name (2 lines max), category meta, price row with compare-at, badges top-left.
+- Hover: lift shadow and image scale `1.03` on pointer devices only.
 
-### Badges and order status
-Always text, never colour alone.
-| Status | Style |
-| --- | --- |
-| Pending payment | Muted outline |
-| Paid | Gold outline |
-| Confirmed | Gold fill, Jet Black text |
-| Processing | Off-White outline |
-| Shipped | Off-White fill, Jet Black text |
-| Delivered | Success outline |
-| Cancelled | Error outline |
+### Buttons
+- Primary: gold fill `#C6A15B`, ink text `#14100A`, 8 px radius, 44–48 px tall.
+- Secondary: ink fill `#121212`, white text (storefront) / surface fill with border (dashboard).
+- Tertiary: text with underline on hover.
+- Destructive: outline error, never a full red fill.
 
-### Tables (dashboards)
-Desktop: normal table with sticky header, 44 px rows. Below 768 px: each row becomes a stacked card (label and value pairs), never a horizontally scrolling table.
+### Forms
+- Label above, 14 px medium. Input 44–48 px, 8 px radius, 1 px `border-strong`, white background.
+- Focus: 2 px gold ring with 2 px offset. Error text below in `error`, never colour-only.
+- One column on mobile. Two columns only for short paired fields (city / state).
 
-### Toasts and messages
-Bottom of screen on mobile, bottom-right on desktop. Plain text, auto-dismiss after 5 seconds, errors stay until closed. No emojis.
+### Cart and checkout
+- Cart line: 72–88 px thumbnail, name, size, quantity stepper, line total, remove.
+- Summary panel sticks on desktop, sits below the form on mobile.
+- Checkout is one page, form left, summary right. Show the delivery fee as soon as a state is chosen.
+- Payment button states: idle, "Opening secure payment…", error. Never leave the customer guessing.
 
-### Icons
-`lucide-react`, 1.5 px stroke, 20 px (24 px for header actions). Icons accompany text; icon-only buttons need an accessible name.
+## 6. Dashboard components
 
-## 6. Motion
+- **Shell:** 256 px sidebar (`surface`), wordmark top, grouped nav (Store, Operations, Settings), active item gold text with a 12% gold tint and a 2 px gold left edge. Top bar with page context, "View store", user chip and sign out.
+- **Mobile:** top bar with menu button; navigation opens in the existing `Drawer`. Tables become stacked cards.
+- **Cards:** `surface`, 1 px `border`, 12 px radius, 20–24 px padding.
+- **Metrics:** label above, number in Oswald, delta or context below. No sparkline until there is real data.
+- **Tables:** 44 px rows, muted header, hover `charcoal`, money right-aligned and tabular, status chips. Empty state always explains the next action.
+- **Status colours:** awaiting payment muted, paid gold, confirmed/processing blue-neutral, shipped ink, delivered success, cancelled/error red. Always pair colour with text.
 
-Purpose: confirm an action or soften a change. Nothing else.
+## 7. Motion
 
-Allowed:
-- Colour, border and background transitions on hover and focus: 150 ms.
-- Drawer, sheet and modal open and close: 200 ms, ease-out.
-- Content fade-in of 200 ms on route change (opacity only).
-- Product image scale 1.03 on card hover (desktop only).
-- Skeleton placeholders (a static dark block, with at most a slow 1.5 s opacity pulse) while data loads.
+- 150–200 ms, `cubic-bezier(0.2, 0, 0, 1)`.
+- Hover: background, border and shadow only. Image scale `1.03` on pointer devices.
+- Drawers slide 200 ms. Toasts fade and rise 8 px.
+- Respect `prefers-reduced-motion`: remove transforms and animation durations.
 
-Not allowed: parallax, scroll-jacking, scroll-triggered reveal on every block, auto-advancing carousels, marquees, bouncing, spinning, animated counters, cursor effects, page-load intros, anything over 250 ms.
+## 8. Responsive
 
-Always honour the user's setting:
-```css
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-}
-```
+- Mobile first. No horizontal scroll at 320 px.
+- Grids: 2 columns at 360 px, 3 at 768 px, 4 at 1024 px, 4–5 at 1280 px.
+- Touch targets 44 px minimum. Sticky header on mobile, sticky summary on desktop checkout.
+- Dashboard sidebar collapses below 1024 px. Filters collapse into a `<details>` panel below 768 px.
 
-## 7. Logo
+## 9. Accessibility
 
-Files in `public/brand/`. The mark is a gold crescent C with a silver I and a crown, with the wordmark CREAMICE in gold and silver. It already contains silver and metallic texture that is not part of the colour palette; use the logo only as supplied and never recolour it.
+- Contrast: 4.5:1 for body text, 3:1 for large text and UI outlines.
+- Visible focus on every control. Skip link to `#main`.
+- Images need alt text; decorative placeholders are `aria-hidden`.
+- Form errors are linked with `aria-describedby` and announced with `role="alert"`.
+- Colour is never the only signal for status or errors.
 
-- On Jet Black, use `logo-black-bg.jpeg` until a transparent version exists. Its background is near black but not exactly `#0B0B0B`, so place it in a container with a background of pure black or ask the designer for a transparent PNG or SVG (preferred; requested in the PRD).
-- Minimum height in the header: 40 px (mark only) or 28 px if the wordmark alone is used. Clear space around the logo equals the height of the crown.
-- Do not stretch, rotate, add effects or place it on busy photos.
-- Use a small, optimised, transparent file for the header, and the large file only for Open Graph images and print.
+## 10. Content rules
 
-## 8. Wireframes (structure only)
+- No emojis anywhere.
+- Do not invent prices, stock, policy text, delivery promises, ratings or review counts.
+- Placeholder product imagery must say it is a placeholder; never fake a photo.
+- Empty states say what will appear and what to do next.
+- Currency is naira, formatted from integer kobo (`formatNaira`).
 
-Home, mobile:
-```
-[menu]   CREAMICE LOGO   [search][cart 0]
-------------------------------------------
-[ hero image ]
-NEW SEASON ESSENTIALS
-[ SHOP NOW ]  (gold)
-------------------------------------------
-SHOP BY CATEGORY
-[Hoodies][Joggers]
-[Sweatshirts][Sweatpants]
-------------------------------------------
-NEW ARRIVALS             View all
-[card][card]
-[card][card]
-------------------------------------------
-Delivery across Nigeria | Secure payment | WhatsApp support
-------------------------------------------
-LATEST UPDATES (3 items)
-------------------------------------------
-footer links, WhatsApp Channel, Instagram
-```
+## 11. Implementation notes
 
-Product page, desktop:
-```
-Home / Hoodies / Black Hoodie
-[ gallery with thumbnails ]    NAME (Oswald)
-                               NGN 25,000
-                               Size: [S][M][L][XL][XXL]
-                               Quantity [-] 1 [+]
-                               [ ADD TO CART ] (gold)
-                               Delivery: Nigeria, 2 to 5 days (from settings)
-                               Share on WhatsApp
-Description | Delivery and returns
-You may also like (4 cards)
-```
-
-Checkout, desktop:
-```
-Delivery details               | Order summary
-Full name [        ]           | thumb  Name  size  qty   price
-Email     [        ]           | Discount code [      ] [Apply]
-Phone     [        ]           | Subtotal
-Address   [        ]           | Delivery (by state)
-City [    ]  State [select v]  | Total
-Note      [        ]           | [ PAY WITH FLUTTERWAVE ]
-                               | Secure payment by Flutterwave
-```
-On mobile the summary sits above the form, collapsed to one line "Order total, show details".
-
-Partner orders, mobile (no money fields):
-```
-Orders   [Status: Paid v]  [search]
------------------------------------
-CRM-1042        PAID
-Ada Obi, Lagos
-2 items
-[ View ]   [ Approve ]
------------------------------------
-```
-
-## 9. Imagery and tone of writing
-
-- Photos: one consistent backdrop, front and back views, a detail shot, natural light, sized as in the technical doc. Minimum 1200 px on the long side before compression.
-- Copy: short, direct, confident. Sentence case for body, uppercase only through the heading style. No exclamation marks in a row, no slang that excludes people, no emojis.
-- Error and empty messages explain what happened and what to do next.
+- Tokens live in `src/app/globals.css`. `:root` is the light storefront; `.theme-admin` overrides for the dashboard. Components use the same utility names in both themes.
+- `jet` means *canvas*, `offwhite` means *ink*, `charcoal` means *soft surface*. The names are historical; the values are what change.
+- Do not hard-code hex values in components. Add a token instead.

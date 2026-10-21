@@ -53,14 +53,14 @@ export default async function EditProductPage({ params }: Props) {
       </div>
 
       {product.review_note && (
-        <div className="p-4 bg-error/10 border border-error rounded-[4px]" role="status">
+        <div className="p-4 bg-error/10 border border-error rounded-lg" role="status">
           <p className="font-montserrat font-medium text-error text-sm">Admin note</p>
           <p className="text-sm text-offwhite mt-1">{product.review_note}</p>
         </div>
       )}
 
       {isAwaiting && (
-        <div className="p-4 bg-charcoal border border-gold/40 rounded-[4px] space-y-2">
+        <div className="p-4 bg-charcoal border border-gold/40 rounded-lg space-y-2">
           <p className="font-montserrat font-medium text-gold text-sm">
             {product.pending_changes
               ? "Changes awaiting admin approval"

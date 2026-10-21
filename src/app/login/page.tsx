@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -41,53 +42,103 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-jet text-offwhite flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="font-oswald font-semibold text-3xl uppercase tracking-[0.02em]">
-            Sign in
-          </h1>
-          <p className="mt-2 text-muted">Creamice admin dashboard</p>
+    <main className="theme-admin grid min-h-screen bg-jet text-offwhite lg:grid-cols-2">
+      {/* Brand panel */}
+      <section className="relative hidden overflow-hidden bg-[#0B0B0B] p-10 lg:flex lg:flex-col lg:justify-between">
+        <div>
+          <p className="font-oswald text-2xl font-semibold uppercase leading-none tracking-[0.14em] text-offwhite">
+            Creamice<span className="text-gold">.</span>
+          </p>
+          <p className="mt-2 text-xs uppercase tracking-[0.16em] text-muted">
+            Store operations
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-surface rounded-[4px] border border-border p-6 space-y-4">
-          {error && (
-            <div className="p-3 bg-error/10 border border-error rounded-[4px] text-error text-sm" role="alert">
-              {error}
-            </div>
-          )}
+        <div className="relative mx-auto w-full max-w-[360px]">
+          <div className="relative aspect-square">
+            <Image
+              src="/brand/logo-black-bg.jpeg"
+              alt="Creamice"
+              fill
+              sizes="360px"
+              className="object-contain"
+              priority
+            />
+          </div>
+        </div>
 
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@creamice.com"
-            autoComplete="email"
-            required
-            disabled={loading}
-          />
+        <div>
+          <h1 className="max-w-[20ch] font-oswald text-3xl font-semibold uppercase leading-tight tracking-[0.02em] text-offwhite">
+            Run the store from one place.
+          </h1>
+          <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-muted">
+            Products, partner submissions, orders and delivery — all behind one
+            sign-in.
+          </p>
+        </div>
+      </section>
 
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            autoComplete="current-password"
-            required
-            disabled={loading}
-          />
+      {/* Form */}
+      <section className="flex items-center justify-center px-5 py-12 sm:px-8">
+        <div className="w-full max-w-[380px]">
+          <div className="mb-8 lg:hidden">
+            <p className="font-oswald text-xl font-semibold uppercase leading-none tracking-[0.12em] text-offwhite">
+              Creamice<span className="text-gold">.</span>
+            </p>
+            <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted">
+              Store operations
+            </p>
+          </div>
 
-          <Button type="submit" className="w-full" loading={loading}>
+          <h2 className="font-oswald text-[28px] font-semibold uppercase tracking-[0.02em] text-offwhite">
             Sign in
-          </Button>
-        </form>
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Staff access only. Use the account an admin created for you.
+          </p>
 
-        <p className="mt-6 text-center text-sm text-muted">
-          No account? Contact an admin to create one.
-        </p>
-      </div>
+          <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+            {error && (
+              <div
+                className="rounded-lg border border-error/40 bg-error/10 p-3 text-sm text-error"
+                role="alert"
+              >
+                {error}
+              </div>
+            )}
+
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@creamice.com"
+              autoComplete="email"
+              required
+              disabled={loading}
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              required
+              disabled={loading}
+            />
+
+            <Button type="submit" className="w-full" loading={loading}>
+              Sign in
+            </Button>
+          </form>
+
+          <p className="mt-6 text-center text-xs leading-relaxed text-muted">
+            No account? Ask an admin to create one for you.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

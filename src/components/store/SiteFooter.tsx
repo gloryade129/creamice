@@ -2,23 +2,25 @@ import Link from "next/link";
 import { Instagram, MessageCircle } from "lucide-react";
 import { getPublicSiteLinks } from "@/lib/data/settings";
 
-// PRD 5.1 footer. Server component: links from the database come through
-// getPublicSiteLinks (public columns only). The Instagram URL has no
-// settings column yet, so it comes from the environment and the link is
-// hidden until the owner supplies it.
+// The footer is the one large dark block in the light storefront. Wrapping it
+// in .theme-admin keeps the same components working with dark tokens.
 export async function SiteFooter() {
   const links = await getPublicSiteLinks();
   const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || null;
 
   return (
-    <footer className="bg-surface border-t border-border">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-3">
-          <span className="font-oswald font-semibold text-xl uppercase tracking-[0.02em] text-gold">
-            Creamice
-          </span>
-          <p className="text-sm text-muted max-w-[70ch]">
-            Nigerian streetwear. Delivery across Nigeria, secure payment by Flutterwave.
+    <footer className="theme-admin border-t border-border bg-jet text-offwhite">
+      <div className="container-page grid gap-10 py-12 md:grid-cols-2 md:py-16 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="space-y-4">
+          <Link
+            href="/"
+            className="inline-block font-oswald text-2xl font-semibold uppercase leading-none tracking-[0.12em] text-offwhite"
+          >
+            Creamice<span className="text-gold">.</span>
+          </Link>
+          <p className="max-w-[38ch] text-sm leading-relaxed text-muted">
+            Nigerian streetwear. Simple pieces, honest prices, delivery across
+            all 36 states and the FCT.
           </p>
           <div className="flex items-center gap-2 pt-1">
             {links.whatsapp_channel_url && (
@@ -26,9 +28,9 @@ export async function SiteFooter() {
                 href={links.whatsapp_channel_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-11 inline-flex items-center gap-2 px-3 text-sm text-offwhite hover:text-gold transition-colors border border-border-strong rounded-[4px]"
+                className="inline-flex h-11 items-center gap-2 rounded-lg border border-border-strong px-3 text-sm text-offwhite transition-colors hover:border-gold hover:text-gold"
               >
-                <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
                 WhatsApp Channel
               </a>
             )}
@@ -37,9 +39,9 @@ export async function SiteFooter() {
                 href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-11 inline-flex items-center gap-2 px-3 text-sm text-offwhite hover:text-gold transition-colors border border-border-strong rounded-[4px]"
+                className="inline-flex h-11 items-center gap-2 rounded-lg border border-border-strong px-3 text-sm text-offwhite transition-colors hover:border-gold hover:text-gold"
               >
-                <Instagram className="w-4 h-4" aria-hidden="true" />
+                <Instagram className="h-4 w-4" aria-hidden="true" />
                 Instagram
               </a>
             )}
@@ -50,6 +52,7 @@ export async function SiteFooter() {
           heading="Shop"
           links={[
             { href: "/shop", label: "All products" },
+            { href: "/shop?sort=newest", label: "New in" },
             { href: "/updates", label: "Updates" },
             { href: "/track", label: "Track your order" },
           ]}
@@ -73,8 +76,9 @@ export async function SiteFooter() {
       </div>
 
       <div className="border-t border-border">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 py-4 text-xs text-muted">
-          © {new Date().getFullYear()} Creamice. All rights reserved.
+        <div className="container-page flex flex-col gap-2 py-5 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Creamice. All rights reserved.</p>
+          <p>Secure online payment by Flutterwave</p>
         </div>
       </div>
     </footer>
@@ -90,13 +94,15 @@ function FooterColumn({
 }) {
   return (
     <nav aria-label={heading}>
-      <p className="text-xs uppercase tracking-[0.04em] text-muted mb-3">{heading}</p>
-      <ul className="space-y-1">
+      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
+        {heading}
+      </p>
+      <ul>
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="inline-flex items-center min-h-[44px] text-sm text-offwhite hover:text-gold transition-colors"
+              className="inline-flex min-h-[40px] items-center text-sm text-offwhite transition-colors hover:text-gold"
             >
               {link.label}
             </Link>

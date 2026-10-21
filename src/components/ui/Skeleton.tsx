@@ -14,9 +14,9 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
     const baseStyles = "bg-charcoal relative overflow-hidden";
 
     const variants = {
-      text: "h-4 rounded-[2px]",
+      text: "h-4 rounded-md",
       circular: "rounded-full",
-      rectangular: "rounded-[4px]",
+      rectangular: "rounded-lg",
     };
 
     return (

@@ -31,7 +31,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
 
       {params.ok && (
         <div
-          className="p-4 bg-success/10 border border-success rounded-[4px] text-success text-sm"
+          className="p-4 bg-success/10 border border-success rounded-lg text-success text-sm"
           role="status"
         >
           {params.ok === "approved" ? "Approved." : "Rejected and sent back to the partner."}
@@ -39,7 +39,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
       )}
       {params.error && (
         <div
-          className="p-4 bg-error/10 border border-error rounded-[4px] text-error text-sm"
+          className="p-4 bg-error/10 border border-error rounded-lg text-error text-sm"
           role="alert"
         >
           {params.error === "note-required"
@@ -51,7 +51,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
       )}
 
       {products.length === 0 ? (
-        <div className="bg-surface rounded-[4px] border border-border p-12 text-center">
+        <div className="bg-surface rounded-lg border border-border p-12 text-center">
           <p className="text-muted">Nothing is waiting for review.</p>
         </div>
       ) : (
@@ -74,7 +74,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
             return (
               <li
                 key={product.id}
-                className="bg-surface border border-border rounded-[4px] p-4 lg:p-6 space-y-4"
+                className="bg-surface border border-border rounded-lg p-4 lg:p-6 space-y-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1">
@@ -107,7 +107,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
 
                 <div className="flex gap-4">
                   {previewSrc && (
-                    <div className="relative w-20 h-24 shrink-0 bg-charcoal rounded-[4px] overflow-hidden border border-border">
+                    <div className="relative w-20 h-24 shrink-0 bg-charcoal rounded-lg overflow-hidden border border-border">
                       <Image
                         src={previewSrc}
                         alt={`Proposed image for ${product.name}`}
@@ -170,7 +170,7 @@ export default async function ApprovalQueuePage({ searchParams }: Props) {
                       rows={2}
                       maxLength={500}
                       placeholder="e.g. Use a clearer price for the lounge pants"
-                      className="w-full bg-charcoal border border-border-strong rounded-[4px] px-4 py-3 text-offwhite placeholder:text-muted text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
+                      className="w-full bg-charcoal border border-border-strong rounded-lg px-4 py-3 text-offwhite placeholder:text-muted text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
                     />
                   </label>
                   <div className="flex flex-wrap gap-3">

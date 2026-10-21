@@ -222,14 +222,14 @@ export function ImageUploader({
   return (
     <div className="space-y-4">
       {error && (
-        <div className="p-3 bg-error/10 border border-error rounded-[4px] text-error text-sm" role="alert">
+        <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm" role="alert">
           {error}
         </div>
       )}
 
       <div
         className={cn(
-          "border-2 border-dashed rounded-[4px] p-6 transition-colors",
+          "border-2 border-dashed rounded-lg p-6 transition-colors",
           "border-border hover:border-gold/50",
           dragging && "border-gold",
           (disabled || full) && "opacity-50 cursor-not-allowed"
@@ -298,7 +298,7 @@ export function ImageUploader({
               return (
                 <div
                   key={`${image.storage_path}-${index}`}
-                  className="relative group bg-surface rounded-[4px] border border-border overflow-hidden"
+                  className="relative group bg-surface rounded-lg border border-border overflow-hidden"
                 >
                   <div className="aspect-[4/5] relative overflow-hidden bg-charcoal">
                     {src ? (
@@ -314,7 +314,7 @@ export function ImageUploader({
                         Preview unavailable
                       </div>
                     )}
-                    <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded-[2px]">
+                    <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded-md">
                       #{index + 1}
                     </span>
                   </div>
@@ -326,7 +326,7 @@ export function ImageUploader({
                       onChange={(e) => updateAlt(index, e.target.value)}
                       placeholder="Alt text"
                       maxLength={200}
-                      className="w-full text-xs bg-charcoal border border-border-strong rounded-[2px] px-2 py-2 text-offwhite placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-gold"
+                      className="w-full text-xs bg-charcoal border border-border-strong rounded-md px-2 py-2 text-offwhite placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-gold"
                       aria-label={`Alt text for image ${index + 1}`}
                     />
                     {/* flex-wrap: at 320px the three 44px buttons cannot share a row */}
@@ -336,7 +336,7 @@ export function ImageUploader({
                           type="button"
                           onClick={() => move(index, -1)}
                           disabled={index === 0 || uploading > 0}
-                          className="w-11 h-11 flex items-center justify-center text-muted hover:text-gold transition-colors rounded-[2px] focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-30"
+                          className="w-11 h-11 flex items-center justify-center text-muted hover:text-gold transition-colors rounded-md focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-30"
                           aria-label={`Move image ${index + 1} earlier`}
                         >
                           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -345,7 +345,7 @@ export function ImageUploader({
                           type="button"
                           onClick={() => move(index, 1)}
                           disabled={index === value.length - 1 || uploading > 0}
-                          className="w-11 h-11 flex items-center justify-center text-muted hover:text-gold transition-colors rounded-[2px] focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-30"
+                          className="w-11 h-11 flex items-center justify-center text-muted hover:text-gold transition-colors rounded-md focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-30"
                           aria-label={`Move image ${index + 1} later`}
                         >
                           <ChevronRight className="w-4 h-4" aria-hidden="true" />
@@ -354,7 +354,7 @@ export function ImageUploader({
                       <button
                         type="button"
                         onClick={() => handleRemove(index)}
-                        className="w-11 h-11 flex items-center justify-center text-muted hover:text-error transition-colors rounded-[2px] hover:bg-error/10 focus:outline-none focus:ring-1 focus:ring-error"
+                        className="w-11 h-11 flex items-center justify-center text-muted hover:text-error transition-colors rounded-md hover:bg-error/10 focus:outline-none focus:ring-1 focus:ring-error"
                         aria-label={`Remove image ${index + 1}`}
                         disabled={uploading > 0}
                       >

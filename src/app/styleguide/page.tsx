@@ -49,7 +49,7 @@ const formExample = (
         id="email"
         type="email"
         placeholder="you@example.com"
-        className="w-full h-12 bg-charcoal border border-border-strong rounded-[4px] px-4 text-offwhite placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
+        className="w-full h-12 bg-charcoal border border-border-strong rounded-lg px-4 text-offwhite placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
       />
     </div>
     <div>
@@ -60,7 +60,7 @@ const formExample = (
         id="password"
         type="password"
         placeholder="••••••••"
-        className="w-full h-12 bg-charcoal border border-border-strong rounded-[4px] px-4 text-offwhite placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
+        className="w-full h-12 bg-charcoal border border-border-strong rounded-lg px-4 text-offwhite placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-jet"
       />
     </div>
     <div className="text-sm text-error">Enter a valid email address</div>
@@ -88,7 +88,7 @@ export default function StyleguidePage() {
             {colors.map((c) => (
               <div
                 key={c.token}
-                className={`p-4 rounded-[4px] border border-border transition-colors hover:border-border-strong bg-[${c.hex}] text-[${c.text}]`}
+                className={`p-4 rounded-lg border border-border transition-colors hover:border-border-strong bg-[${c.hex}] text-[${c.text}]`}
                 style={{ backgroundColor: c.hex }}
               >
                 <div className="font-oswald font-medium uppercase tracking-[0.02em] text-sm mb-1">
@@ -110,7 +110,7 @@ export default function StyleguidePage() {
             {typeScale.map((t) => (
               <div
                 key={t.name}
-                className="p-4 bg-surface rounded-[4px] border border-border"
+                className="p-4 bg-surface rounded-lg border border-border"
               >
                 <div className="flex flex-wrap items-baseline gap-4 mb-2">
                   <span className="font-oswald font-medium uppercase tracking-[0.02em]">
@@ -153,7 +153,7 @@ export default function StyleguidePage() {
             {buttons.map((b) => (
               <button
                 key={b.variant}
-                className={`inline-flex items-center justify-center h-12 px-6 rounded-[4px] font-montserrat font-semibold uppercase tracking-[0.04em] text-sm transition-colors duration-150 ${b.className}`}
+                className={`inline-flex items-center justify-center h-12 px-6 rounded-lg font-montserrat font-semibold uppercase tracking-[0.04em] text-sm transition-colors duration-150 ${b.className}`}
               >
                 {b.variant}
               </button>
@@ -170,7 +170,7 @@ export default function StyleguidePage() {
           <h2 className="text-2xl font-oswald font-semibold tracking-[0.02em] uppercase mb-6">
             Form Fields
           </h2>
-          <div className="bg-surface rounded-[4px] border border-border p-6">
+          <div className="bg-surface rounded-lg border border-border p-6">
             {formExample}
           </div>
           <p className="mt-4 text-sm text-muted max-w-2xl">
@@ -185,19 +185,19 @@ export default function StyleguidePage() {
             Spacing & Radius
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            <div className="p-4 bg-surface rounded-[4px] border border-border">
+            <div className="p-4 bg-surface rounded-lg border border-border">
               <div className="font-mono text-lg">4px</div>
               <div className="text-xs text-muted">Base unit</div>
             </div>
-            <div className="p-4 bg-surface rounded-[4px] border border-border">
+            <div className="p-4 bg-surface rounded-lg border border-border">
               <div className="font-mono text-lg">--radius</div>
               <div className="text-xs text-muted">4px everywhere</div>
             </div>
-            <div className="p-4 bg-surface rounded-[4px] border border-border">
+            <div className="p-4 bg-surface rounded-lg border border-border">
               <div className="font-mono text-lg">--dur-fast</div>
               <div className="text-xs text-muted">150ms</div>
             </div>
-            <div className="p-4 bg-surface rounded-[4px] border border-border">
+            <div className="p-4 bg-surface rounded-lg border border-border">
               <div className="font-mono text-lg">--dur-base</div>
               <div className="text-xs text-muted">200ms</div>
             </div>
@@ -208,7 +208,7 @@ export default function StyleguidePage() {
           <h2 className="text-2xl font-oswald font-semibold tracking-[0.02em] uppercase mb-6">
             Motion & Reduced Motion
           </h2>
-          <div className="bg-surface rounded-[4px] border border-border p-6 space-y-3 text-sm">
+          <div className="bg-surface rounded-lg border border-border p-6 space-y-3 text-sm">
             <p><strong>Allowed:</strong> 150ms hover/focus transitions, 200ms drawer/sheet/modal, 200ms content fade-in, 1.03x image scale on hover (desktop), skeleton pulse 1.5s.</p>
             <p><strong>Not allowed:</strong> Parallax, scroll-jacking, auto-carousels, marquees, bouncing, spinning, animated counters, page-load intros, anything over 250ms.</p>
             <p><strong>Reduced motion:</strong> Honoured via @media (prefers-reduced-motion: reduce) — all animations/transitions set to 0.01ms.</p>

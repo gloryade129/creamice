@@ -4,27 +4,32 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "default" | "sm" | "lg";
   loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "default", loading, disabled, children, ...props }, ref) => {
+  (
+    { className, variant = "primary", size = "default", loading, disabled, children, ...props },
+    ref
+  ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-montserrat font-semibold uppercase tracking-[0.04em] rounded-[4px] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-jet disabled:opacity-40 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center gap-2 font-montserrat font-semibold uppercase tracking-[0.04em] rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-jet disabled:opacity-40 disabled:cursor-not-allowed";
 
     const variants = {
-      primary: "bg-gold text-jet hover:bg-gold-hover active:bg-gold-pressed",
-      secondary: "border border-offwhite text-offwhite hover:bg-charcoal",
-      ghost: "text-offwhite underline-offset-2 hover:underline",
-      danger: "border border-error text-error hover:bg-error/10",
+      primary: "bg-gold text-on-gold hover:bg-gold-hover active:bg-gold-pressed",
+      secondary: "bg-offwhite text-jet hover:opacity-90",
+      outline:
+        "border border-border-strong text-offwhite hover:border-offwhite hover:bg-charcoal",
+      ghost: "text-offwhite hover:bg-charcoal",
+      danger: "border border-error/50 text-error hover:bg-error/10",
     };
 
     const sizes = {
-      default: "h-12 px-6 text-sm",
-      sm: "h-10 px-4 text-xs",
-      lg: "h-14 px-8 text-base",
+      default: "h-11 px-5 text-sm",
+      sm: "h-9 px-3.5 text-xs",
+      lg: "h-12 px-7 text-sm",
     };
 
     return (
@@ -34,7 +39,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         {...props}
       >
-        {loading ? "Please wait" : children}
+        {loading ? "Please wait…" : children}
       </button>
     );
   }

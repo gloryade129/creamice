@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -15,7 +16,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
-  const { data: profile } = await supabase
+  // RLS keeps profiles out of the browser client; read the flag server-side.
+  const admin = createAdminClient();
+  const { data: profile } = await admin
     .from("profiles")
     .select("is_active")
     .eq("id", data.user.id)

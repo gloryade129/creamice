@@ -66,9 +66,9 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
   const variants = {
-    success: "bg-success text-jet border-success",
-    error: "bg-error text-jet border-error",
-    warning: "bg-gold text-jet border-gold",
+    success: "bg-success/15 text-success border-success/40",
+    error: "bg-error/15 text-error border-error/40",
+    warning: "bg-gold/15 text-gold-ink border-gold/40",
     info: "bg-charcoal text-offwhite border-border",
   };
 
@@ -82,7 +82,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   return (
     <div
       className={cn(
-        "pointer-events-auto flex items-start gap-3 p-4 rounded-[4px] border min-w-[280px] max-w-[400px] shadow-lg animate-in slide-in-from-right duration-200",
+        "pointer-events-auto flex items-start gap-3 p-4 rounded-lg border min-w-[280px] max-w-[400px] shadow-lg animate-in slide-in-from-right duration-200",
         variants[toast.type || "info"]
       )}
       role="alert"
@@ -91,7 +91,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
       <p className="flex-1 text-sm font-montserrat">{toast.message}</p>
       <button
         onClick={() => onDismiss(toast.id)}
-        className="flex-shrink-0 p-1 text-current opacity-60 hover:opacity-100 transition-opacity rounded-[2px] hover:bg-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+        className="flex-shrink-0 p-1 text-current opacity-60 hover:opacity-100 transition-opacity rounded-md hover:bg-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         aria-label="Dismiss notification"
       >
         <X className="w-4 h-4" />

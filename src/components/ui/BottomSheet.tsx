@@ -45,7 +45,7 @@ export function BottomSheet({ open, onClose, children, title, className }: Botto
   return (
     <Fragment>
       <div
-        className="fixed inset-0 bg-jet/60 z-40 transition-opacity duration-200"
+        className="fixed inset-0 z-40 bg-black/50 transition-opacity duration-200"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -53,7 +53,7 @@ export function BottomSheet({ open, onClose, children, title, className }: Botto
         ref={sheetRef}
         tabIndex={-1}
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-50 bg-jet border-t border-border rounded-t-[12px] flex flex-col max-h-[85vh] transition-transform duration-200 ease-out translate-y-0",
+          "fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-border rounded-t-2xl flex flex-col max-h-[85vh] transition-transform duration-200 ease-out translate-y-0",
           className
         )}
         role="dialog"
@@ -68,7 +68,7 @@ export function BottomSheet({ open, onClose, children, title, className }: Botto
           )}
           <button
             onClick={onClose}
-            className="p-2 text-muted hover:text-offwhite transition-colors rounded-[4px] hover:bg-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="p-2 text-muted hover:text-offwhite transition-colors rounded-lg hover:bg-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
             aria-label="Close sheet"
           >
             <X className="w-5 h-5" />

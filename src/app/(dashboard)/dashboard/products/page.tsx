@@ -41,7 +41,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
       {params.ok && (
         <div
-          className="p-4 bg-success/10 border border-success rounded-[4px] text-success text-sm"
+          className="p-4 bg-success/10 border border-success rounded-lg text-success text-sm"
           role="status"
         >
           Product archived.
@@ -49,7 +49,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       )}
       {params.error && (
         <div
-          className="p-4 bg-error/10 border border-error rounded-[4px] text-error text-sm"
+          className="p-4 bg-error/10 border border-error rounded-lg text-error text-sm"
           role="alert"
         >
           {params.error === "not-found"
@@ -59,7 +59,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       )}
 
       {products.length === 0 ? (
-        <div className="bg-surface rounded-[4px] border border-border p-12 text-center">
+        <div className="bg-surface rounded-lg border border-border p-12 text-center">
           <p className="text-muted mb-4">No products yet.</p>
           <Link href="/dashboard/products/new">
             <Button>Create your first product</Button>
@@ -70,7 +70,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           {products.map((product) => (
             <li
               key={product.id}
-              className="bg-surface border border-border rounded-[4px] p-4 space-y-3"
+              className="bg-surface border border-border rounded-lg p-4 space-y-3"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">

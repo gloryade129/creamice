@@ -36,12 +36,15 @@ Read only what the current task needs, but always check the PRD section and the 
 - Keep the code host-neutral: no Vercel-only services.
 
 ## Design rules (short version; full rules in the design doc)
-- Colours: only the tokens in `globals.css`. Jet Black `#0B0B0B` background, Off-White `#F5F2EB` text, Gold `#C6A15B` for primary buttons and key accents, Charcoal `#292929` raised surfaces.
-- Fonts: Oswald for headings and product titles, Montserrat for everything else. Through `next/font` only.
-- No emojis, no gradients, no shadows on cards, no glows, no carousels that move on their own.
-- Animation: 150 to 200 ms transitions only, and respect `prefers-reduced-motion`.
+- Two themes: **light storefront** (`:root`) and **dark dashboard** (`.theme-admin`). The storefront is a clean marketplace; the dashboard is a focused admin tool. Never mix them.
+- Colours: only the tokens in `globals.css`. Black, gold and white. Gold is an accent, not a wash: one filled gold primary action per viewport.
+- Gold `#C6A15B` is never used as small text on white. Use `gold-ink` for gold text in the light theme.
+- Fonts: Oswald for display and dashboard numbers, Montserrat for everything else. Through `next/font` only.
+- No emojis, no gradients, no glows, no glassmorphism, no auto-playing carousels. Shadows only on hover and floating layers.
+- Radii: 8 px controls, 12 px cards, 16 px panels. Borders separate content.
+- Animation: 150 to 200 ms only, and respect `prefers-reduced-motion`.
 - Mobile first. No horizontal scroll at 320 px. Touch targets at least 44 px. Tables become stacked cards on mobile.
-- Gold text is never placed on a light background (fails contrast).
+- Never invent prices, stock, ratings, policy text or delivery promises. Placeholder imagery must be labelled as such.
 
 ## Code style
 - TypeScript strict mode. No `any`. Small functions, clear names.

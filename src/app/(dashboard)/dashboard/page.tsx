@@ -1,14 +1,48 @@
 import { requireRole } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { getProducts } from "@/lib/data/products";
-import { publicImageUrl } from "@/lib/images";
+import {
+  ArrowRight,
+  ClipboardCheck,
+  Package,
+  Plus,
+  Settings,
+  ShoppingBag,
+} from "lucide-react";
+import { getApprovalQueue, getProducts } from "@/lib/data/products";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { Badge } from "@/components/ui/Badge";
+
+export const dynamic = "force-dynamic";
+
+function StatCard({
+  label,
+  value,
+  hint,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  icon: typeof Package;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-medium text-muted">{label}</p>
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-charcoal text-gold">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </div>
+      <p className="mt-3 font-oswald text-[32px] font-semibold leading-none tabular-nums text-offwhite">
+        {value}
+      </p>
+      <p className="mt-1.5 text-[11px] text-muted">{hint}</p>
+    </div>
+  );
+}
 
 export default async function DashboardPage() {
-  // Each role lands somewhere it is allowed to be; requireRole alone would
-  // bounce partners and the board to /login from their own nav links.
   const user = await requireRole(["admin", "partner", "board"]);
 
   if (user.role === "partner") {
@@ -19,144 +53,231 @@ export default async function DashboardPage() {
     const upcoming = await getProducts({ status: "upcoming" });
 
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-oswald font-semibold text-2xl uppercase tracking-[0.02em]">
-            Upcoming
-          </h1>
-          <p className="text-muted mt-1">Products set to Upcoming by the admin. Read only.</p>
-        </div>
+      <div>
+        <PageHeader
+          eyebrow="Board"
+          title="Upcoming"
+          description="Products marked Upcoming by the admin. Read only."
+        />
 
         {upcoming.length === 0 ? (
-          <div className="bg-surface rounded-[4px] border border-border p-12 text-center">
-            <p className="text-muted">No upcoming products yet.</p>
+          <div className="rounded-xl border border-dashed border-border-strong bg-surface px-6 py-14 text-center">
+            <Package className="mx-auto h-7 w-7 text-muted" aria-hidden="true" />
+            <p className="mt-3 text-sm text-muted">No upcoming products yet.</p>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {upcoming.map((product) => {
-              const src = publicImageUrl(product.images?.[0]?.storage_path);
-              return (
-                <li
-                  key={product.id}
-                  className="bg-surface border border-border rounded-[4px] overflow-hidden"
-                >
-                  <div className="relative aspect-[4/5] bg-charcoal">
-                    {src && (
-                      <Image
-                        src={src}
-                        alt={product.images?.[0]?.alt_text || product.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="p-4 space-y-1">
-                    <h2 className="font-oswald font-medium text-lg uppercase tracking-[0.02em]">
-                      {product.name}
-                    </h2>
-                    <p className="text-xs text-muted">{product.category?.name || "—"}</p>
-                    <p className="text-sm text-muted line-clamp-3">{product.description}</p>
-                  </div>
-                </li>
-              );
-            })}
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {upcoming.map((product) => (
+              <li
+                key={product.id}
+                className="overflow-hidden rounded-xl border border-border bg-surface"
+              >
+                <div className="flex aspect-[4/3] items-center justify-center bg-charcoal">
+                  <Package className="h-8 w-8 text-border-strong" aria-hidden="true" />
+                </div>
+                <div className="space-y-1 p-4">
+                  <h2 className="font-montserrat text-sm font-semibold text-offwhite">
+                    {product.name}
+                  </h2>
+                  <p className="text-xs text-muted">{product.category?.name || "—"}</p>
+                  <p className="line-clamp-3 text-sm text-muted">{product.description}</p>
+                </div>
+              </li>
+            ))}
           </ul>
         )}
       </div>
     );
   }
 
+  const [activeProducts, approvalQueue] = await Promise.all([
+    getProducts({ status: "active" }),
+    getApprovalQueue(),
+  ]);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-oswald font-semibold text-2xl uppercase tracking-[0.02em]">
-          Dashboard
-        </h1>
-        <p className="text-muted mt-1">Welcome back. Here&apos;s what&apos;s happening.</p>
+    <div>
+      <PageHeader
+        eyebrow="Store admin"
+        title="Overview"
+        description="What is live, what needs review, and what needs attention."
+        actions={
+          <Link
+            href="/dashboard/products/new"
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-gold px-4 text-xs font-semibold uppercase tracking-[0.04em] text-on-gold transition-colors hover:bg-gold-hover"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add product
+          </Link>
+        }
+      />
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Active products"
+          value={String(activeProducts.length)}
+          hint="Visible in the storefront"
+          icon={Package}
+        />
+        <StatCard
+          label="Awaiting approval"
+          value={String(approvalQueue.length)}
+          hint="Partner submissions and edits"
+          icon={ClipboardCheck}
+        />
+        <StatCard
+          label="Orders today"
+          value="—"
+          hint="Orders module is the next build"
+          icon={ShoppingBag}
+        />
+        <StatCard
+          label="Revenue this month"
+          value="—"
+          hint="Shown once orders are live"
+          icon={Settings}
+        />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-montserrat font-medium text-muted">Total Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-oswald font-semibold">—</div>
-            <p className="text-xs text-muted mt-1">This month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-montserrat font-medium text-muted">Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-oswald font-semibold">₦0</div>
-            <p className="text-xs text-muted mt-1">This month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-montserrat font-medium text-muted">Pending Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-oswald font-semibold">0</div>
-            <p className="text-xs text-muted mt-1">Awaiting payment</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-montserrat font-medium text-muted">Products</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-oswald font-semibold">0</div>
-            <p className="text-xs text-muted mt-1">Active products</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-montserrat font-medium">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <section className="rounded-xl border border-border bg-surface">
+          <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+            <h2 className="font-montserrat text-sm font-semibold text-offwhite">
+              Quick actions
+            </h2>
+          </div>
+          <div className="divide-y divide-border">
+            <QuickAction
               href="/dashboard/products/new"
-              className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
-            >
-              <span className="font-montserrat font-medium">Add New Product</span>
-              <p className="text-xs text-muted mt-0.5">Create a new product listing</p>
-            </Link>
-            <Link
+              title="Add a product"
+              description="Create a listing with sizes, stock and images."
+              icon={Plus}
+            />
+            <QuickAction
               href="/dashboard/products/approval"
-              className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
-            >
-              <span className="font-montserrat font-medium">Approval Queue</span>
-              <p className="text-xs text-muted mt-0.5">Review partner product submissions</p>
-            </Link>
-            <Link
+              title="Review the approval queue"
+              description="Approve or reject partner submissions."
+              icon={ClipboardCheck}
+              badge={approvalQueue.length > 0 ? String(approvalQueue.length) : undefined}
+            />
+            <QuickAction
               href="/dashboard/orders"
-              className="block p-3 bg-charcoal rounded-[4px] border border-border hover:border-gold transition-colors"
-            >
-              <span className="font-montserrat font-medium">View Orders</span>
-              <p className="text-xs text-muted mt-0.5">Manage and fulfill orders</p>
-            </Link>
-          </CardContent>
-        </Card>
+              title="Orders"
+              description="Manage payment, fulfilment and delivery."
+              icon={ShoppingBag}
+            />
+            <QuickAction
+              href="/dashboard/settings"
+              title="Store settings"
+              description="Contact details, shipping and commission."
+              icon={Settings}
+            />
+          </div>
+        </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-montserrat font-medium">Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted text-sm">No recent activity yet.</p>
-          </CardContent>
-        </Card>
+        <section className="rounded-xl border border-border bg-surface">
+          <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+            <h2 className="font-montserrat text-sm font-semibold text-offwhite">
+              Needs attention
+            </h2>
+            {approvalQueue.length > 0 && (
+              <Badge variant="gold" size="sm">
+                {approvalQueue.length} waiting
+              </Badge>
+            )}
+          </div>
+          <div className="p-5">
+            {approvalQueue.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border-strong bg-charcoal px-4 py-8 text-center">
+                <p className="text-sm text-muted">
+                  Nothing waiting. New partner submissions and edits will appear
+                  here.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {approvalQueue.slice(0, 4).map((product) => (
+                  <li key={product.id}>
+                    <Link
+                      href="/dashboard/products/approval"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5 transition-colors hover:border-border-strong hover:bg-charcoal"
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium text-offwhite">
+                          {product.name}
+                        </span>
+                        <span className="text-[11px] text-muted">
+                          {product.pending_changes
+                            ? "Edit waiting for review"
+                            : "New submission"}
+                        </span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-muted" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
       </div>
+
+      <section className="mt-6 rounded-xl border border-border bg-surface">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <h2 className="font-montserrat text-sm font-semibold text-offwhite">
+            Recent orders
+          </h2>
+          <Link
+            href="/dashboard/orders"
+            className="text-xs font-medium text-muted transition-colors hover:text-offwhite"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="px-5 py-12 text-center">
+          <ShoppingBag className="mx-auto h-7 w-7 text-muted" aria-hidden="true" />
+          <p className="mt-3 text-sm text-muted">
+            No orders yet. New online orders will appear here after payment is
+            confirmed.
+          </p>
+        </div>
+      </section>
     </div>
+  );
+}
+
+function QuickAction({
+  href,
+  title,
+  description,
+  icon: Icon,
+  badge,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  icon: typeof Package;
+  badge?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-charcoal"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-charcoal text-gold">
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-medium text-offwhite">{title}</span>
+        <span className="block text-[11px] text-muted">{description}</span>
+      </span>
+      {badge ? (
+        <Badge variant="gold" size="sm">
+          {badge}
+        </Badge>
+      ) : (
+        <ArrowRight className="h-4 w-4 shrink-0 text-muted" aria-hidden="true" />
+      )}
+    </Link>
   );
 }

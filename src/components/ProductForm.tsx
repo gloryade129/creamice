@@ -214,13 +214,13 @@ export default function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
       {error && (
-        <div className="p-4 bg-error/10 border border-error rounded-[4px] text-error" role="alert">
+        <div className="p-4 bg-error/10 border border-error rounded-lg text-error" role="alert">
           {error}
         </div>
       )}
 
       {!isAdmin && approvalRequired && (
-        <p className="p-4 bg-charcoal border border-border rounded-[4px] text-sm text-muted">
+        <p className="p-4 bg-charcoal border border-border rounded-lg text-sm text-muted">
           {isLive
             ? "Name, price, description, category and image changes go to the admin for approval first. Stock and size changes save immediately."
             : "This product goes to the admin for approval before it appears in the shop."}
@@ -302,7 +302,7 @@ export default function ProductForm({
                   type="checkbox"
                   checked={formData.is_featured}
                   onChange={(e) => update({ is_featured: e.target.checked })}
-                  className="w-4 h-4 rounded-[2px] border-border-strong bg-charcoal text-gold focus:ring-gold"
+                  className="w-4 h-4 rounded-md border-border-strong bg-charcoal text-gold focus:ring-gold"
                 />
                 <span className="font-montserrat text-sm">Featured product</span>
               </label>

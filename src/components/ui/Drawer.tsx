@@ -46,7 +46,7 @@ export function Drawer({ open, onClose, children, position = "left", title, clas
   return (
     <Fragment>
       <div
-        className="fixed inset-0 bg-jet/60 z-40 transition-opacity duration-200"
+        className="fixed inset-0 z-40 bg-black/50 transition-opacity duration-200"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -54,7 +54,7 @@ export function Drawer({ open, onClose, children, position = "left", title, clas
         ref={drawerRef}
         tabIndex={-1}
         className={cn(
-          "fixed top-0 z-50 h-full w-full max-w-[320px] bg-jet border-r border-border flex flex-col transition-transform duration-200 ease-out",
+          "fixed top-0 z-50 h-full w-full max-w-[320px] bg-surface border-r border-border flex flex-col transition-transform duration-200 ease-out",
           position === "left" ? "left-0 translate-x-0" : "right-0 translate-x-0",
           className
         )}
@@ -71,7 +71,7 @@ export function Drawer({ open, onClose, children, position = "left", title, clas
             )}
             <button
               onClick={onClose}
-              className="p-2 text-muted hover:text-offwhite transition-colors rounded-[4px] hover:bg-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              className="p-2 text-muted hover:text-offwhite transition-colors rounded-lg hover:bg-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               aria-label="Close drawer"
             >
               <X className="w-5 h-5" />

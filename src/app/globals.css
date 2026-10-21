@@ -1,92 +1,171 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------- tokens
+   One set of names, two themes. The light values live in the Tailwind theme
+   (so utilities such as bg-jet compile to var(--color-jet)); .theme-admin
+   overrides those variables on the dashboard wrapper. Do not use
+   `@theme inline` for these: inlining would bake the light value into every
+   utility and the dashboard could not switch.
+
+   Historical names, current meaning:
+     jet       -> page canvas
+     surface   -> raised surface / card
+     charcoal  -> soft or nested surface
+     offwhite  -> primary ink
+     muted     -> secondary ink
+     border    -> divider
+     gold      -> brand accent
+*/
+@theme {
+  --color-jet: #ffffff;
+  --color-surface: #ffffff;
+  --color-charcoal: #f6f3ec;
+
+  --color-offwhite: #121212;
+  --color-text: #121212;
+  --color-muted: #6a6a6a;
+  --color-text-muted: #6a6a6a;
+  --color-text-muted-light: #5f5b52;
+
+  --color-border: #e7e2d7;
+  --color-border-strong: #cfc8b9;
+
+  --color-gold: #c6a15b;
+  --color-gold-ink: #7c5f27;
+  --color-gold-hover: #b48f49;
+  --color-gold-pressed: #9c7a37;
+  --color-gold-dark: #6a501f;
+  --color-on-gold: #14100a;
+
+  --color-error: #b42318;
+  --color-success: #067647;
+
+  --shadow-card: 0 1px 2px rgb(17 17 17 / 0.04);
+  --shadow-lift: 0 8px 24px rgb(17 17 17 / 0.08);
+  --shadow-float: 0 16px 40px rgb(17 17 17 / 0.14);
+}
+
+/* Fonts come from next/font on <html>. `inline` keeps the utility pointing at
+   the variable instead of emitting a self-referential theme variable. */
+@theme inline {
+  --font-oswald: var(--font-oswald);
+  --font-montserrat: var(--font-montserrat);
+}
+
 :root {
-  --color-jet: #0B0B0B;
-  --color-gold: #C6A15B;
-  --color-offwhite: #F5F2EB;
-  --color-charcoal: #292929;
-
-  --color-surface: #161616;
-  --color-text: #F5F2EB;
-  --color-text-muted: #B3AEA3;
-  --color-border: #3A3A3A;
-  --color-border-strong: #6B665C;
-  --color-gold-hover: #D4B375;
-  --color-gold-pressed: #A98743;
-  --color-gold-dark: #7A5F26;
-  --color-text-muted-light: #5A564E;
-  --color-error: #E8786A;
-  --color-success: #6DBF8B;
-
-  --radius: 4px;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --dur-fast: 150ms;
   --dur-base: 200ms;
 }
 
-@theme inline {
-  --color-jet: var(--color-jet);
-  --color-gold: var(--color-gold);
-  --color-offwhite: var(--color-offwhite);
-  --color-charcoal: var(--color-charcoal);
-  --color-surface: var(--color-surface);
-  --color-text: var(--color-text);
-  --color-text-muted: var(--color-text-muted);
-  --color-border: var(--color-border);
-  --color-border-strong: var(--color-border-strong);
-  --color-gold-hover: var(--color-gold-hover);
-  --color-gold-pressed: var(--color-gold-pressed);
-  --color-gold-dark: var(--color-gold-dark);
-  --color-text-muted-light: var(--color-text-muted-light);
-  --color-error: var(--color-error);
-  --color-success: var(--color-success);
+.theme-admin {
+  color-scheme: dark;
 
-  --radius: var(--radius);
-  --ease: var(--ease);
-  --dur-fast: var(--dur-fast);
-  --dur-base: var(--dur-base);
+  --color-jet: #0b0b0b;
+  --color-surface: #141414;
+  --color-charcoal: #1e1e1e;
 
-  --font-oswald: var(--font-oswald);
-  --font-montserrat: var(--font-montserrat);
+  --color-offwhite: #f5f2eb;
+  --color-text: #f5f2eb;
+  --color-muted: #a7a199;
+  --color-text-muted: #a7a199;
+  --color-text-muted-light: #6f6a62;
+
+  --color-border: #262626;
+  --color-border-strong: #3a3a3a;
+
+  --color-gold: #c6a15b;
+  --color-gold-ink: #d4b375;
+  --color-gold-hover: #d4b375;
+  --color-gold-pressed: #a98743;
+  --color-gold-dark: #7a5f26;
+  --color-on-gold: #14100a;
+
+  --color-error: #f28b82;
+  --color-success: #7bd39b;
+
+  --shadow-card: none;
+  --shadow-lift: 0 10px 30px rgb(0 0 0 / 0.45);
+  --shadow-float: 0 20px 50px rgb(0 0 0 / 0.6);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-jet);
+    color: var(--color-offwhite);
+    font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-on-gold);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--color-jet);
-  color: var(--color-text);
-  font-family: var(--font-montserrat), sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-oswald), sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-h1, h2 {
-  text-transform: uppercase;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 2px;
 }
 
 @keyframes shimmer {
