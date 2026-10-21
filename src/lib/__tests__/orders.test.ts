@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   canTransition,
   getNextStatuses,
+  getNextStatusesForRole,
+  isOrderStatus,
   isTerminalStatus,
   isPaidStatus,
+  ORDER_STATUS_LABELS,
 } from "../orders";
 
 describe("order status transitions", () => {
@@ -159,5 +162,29 @@ describe("order status transitions", () => {
       expect(isPaidStatus("pending_payment")).toBe(false);
       expect(isPaidStatus("cancelled")).toBe(false);
     });
+  });
+});
+
+describe("order status helpers", () => {
+  it("only offers transitions the role may perform", () => {
+    expect(getNextStatusesForRole("paid", "partner")).toEqual(["confirmed"]);
+    expect(getNextStatusesForRole("paid", "admin")).toEqual([
+      "confirmed",
+      "cancelled",
+    ]);
+    expect(getNextStatusesForRole("pending_payment", "partner")).toEqual([]);
+    expect(getNextStatusesForRole("delivered", "admin")).toEqual([]);
+  });
+
+  it("validates status strings from the URL", () => {
+    expect(isOrderStatus("shipped")).toBe(true);
+    expect(isOrderStatus("refunded")).toBe(false);
+    expect(isOrderStatus(null)).toBe(false);
+  });
+
+  it("has a customer-facing label for every status", () => {
+    expect(ORDER_STATUS_LABELS.pending_payment).toBe("Awaiting payment");
+    expect(ORDER_STATUS_LABELS.delivered).toBe("Delivered");
+    expect(ORDER_STATUS_LABELS.cancelled).toBe("Cancelled");
   });
 });

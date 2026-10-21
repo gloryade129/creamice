@@ -63,6 +63,35 @@ export function getNextStatuses(from: OrderStatus): OrderStatus[] {
   return statusTransitions[from] ?? [];
 }
 
+// Only the transitions this role may actually perform, for rendering buttons.
+export function getNextStatusesForRole(from: OrderStatus, role: UserRole): OrderStatus[] {
+  return getNextStatuses(from).filter((to) => canTransition(from, to, role));
+}
+
+export const ORDER_STATUSES: OrderStatus[] = [
+  "pending_payment",
+  "paid",
+  "confirmed",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
+
+export function isOrderStatus(value: unknown): value is OrderStatus {
+  return typeof value === "string" && ORDER_STATUSES.includes(value as OrderStatus);
+}
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending_payment: "Awaiting payment",
+  paid: "Paid",
+  confirmed: "Confirmed",
+  processing: "Processing",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
+
 export function isTerminalStatus(status: OrderStatus): boolean {
   return status === "delivered" || status === "cancelled";
 }

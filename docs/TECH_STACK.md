@@ -78,13 +78,16 @@ src/
     login/page.tsx
     dashboard/
       layout.tsx             checks role, renders role-specific nav
-      admin/...              products, approvals, orders, shipping, discounts,
-                             updates, team, commission, settings
-      partner/...            products, orders
-      board/...              upcoming, updates
+      page.tsx               overview statistics and recent orders
+      products/...           products, new, edit, approval queue
+      orders/page.tsx        role-aware list (admin sees money, partner does not)
+      orders/[id]/page.tsx   role-aware detail and guarded status actions
+      commission/page.tsx    admin monthly commission report
+      shipping, discounts, updates, team, settings
     api/
       checkout/route.ts      creates order + Flutterwave payment
       checkout/quote/route.ts  server prices for the checkout summary
+      commission/export/route.ts  admin-only CSV for one month
       webhooks/flutterwave/route.ts
     sitemap.ts, robots.ts, not-found.tsx, error.tsx
   proxy.ts                   refreshes the Supabase auth cookies (Next 16 proxy)
@@ -96,11 +99,15 @@ src/
     supabase/                browser client, server client, admin (service role) client
     auth/                    getCurrentUser, requireRole
     data/                    ALL database reads/writes, one file per area
+      partner-orders.ts      partner-safe order columns and queries (no money)
+      orders.ts              admin order reads (payment, commission, totals)
+      reports.ts             overview counts, monthly commission report
     flutterwave.ts           createPayment, verifyTransaction, checkWebhook
     email/                   Brevo customer receipt + seller alert
     order-token.ts           HMAC private links for guest orders
     money.ts                 kobo helpers, formatNaira, commission calc
     orders.ts                allowed status transitions
+    reports.ts               Lagos day/month ranges, CSV and decimal formatting
     cart/                    cart context + localStorage
     validation/              zod schemas
   styles/globals.css         brand tokens
@@ -109,6 +116,10 @@ docs/
 ```
 
 Rules for structure: pages stay thin; business rules live in `lib/`; every database call lives in `lib/data/`, so permission rules are in one place; `lib/supabase/admin.ts` is imported only from server files.
+
+Order reads are deliberately split. `lib/data/partner-orders.ts` selects no `unit_price_kobo`, no totals and never reads `order_payments`; it also excludes `pending_payment`, so a partner cannot open an unpaid cart by direct link. `lib/data/orders.ts` is the admin read model. Tests check the partner column strings, not just the rendered page.
+
+Reporting uses West Africa Time (UTC+1, no DST) for "today" and for the commission month, even though `paid_at` is stored in UTC. The report counts successful payments, not order status, and uses the commission snapshot saved with the payment. Delivery is shown but excluded from commission. CSV money is written as exact decimal naira from integer kobo; the export is admin-only and sends `Cache-Control: no-store`.
 
 ## 5. Authentication and roles
 

@@ -4,13 +4,19 @@ import Link from "next/link";
 import {
   ArrowRight,
   ClipboardCheck,
+  FileText,
   Package,
   Plus,
   Settings,
   ShoppingBag,
+  Wallet,
 } from "lucide-react";
 import { getApprovalQueue, getProducts } from "@/lib/data/products";
+import { getAdminDashboardStats } from "@/lib/data/reports";
+import { listAdminOrders } from "@/lib/data/orders";
+import { formatNaira } from "@/lib/money";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { OrderStatusBadge } from "@/components/dashboard/OrderStatusBadge";
 import { Badge } from "@/components/ui/Badge";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +46,13 @@ function StatCard({
       <p className="mt-1.5 text-[11px] text-muted">{hint}</p>
     </div>
   );
+}
+
+function orderDate(value: string): string {
+  return new Intl.DateTimeFormat("en-NG", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
 }
 
 export default async function DashboardPage() {
@@ -90,10 +103,13 @@ export default async function DashboardPage() {
     );
   }
 
-  const [activeProducts, approvalQueue] = await Promise.all([
+  const [activeProducts, approvalQueue, stats, orderResult] = await Promise.all([
     getProducts({ status: "active" }),
     getApprovalQueue(),
+    getAdminDashboardStats(),
+    listAdminOrders(),
   ]);
+  const recentOrders = orderResult.orders.slice(0, 5);
 
   return (
     <div>
@@ -127,15 +143,15 @@ export default async function DashboardPage() {
         />
         <StatCard
           label="Orders today"
-          value="—"
-          hint="Orders module is the next build"
+          value={String(stats.ordersToday)}
+          hint="Placed since midnight WAT"
           icon={ShoppingBag}
         />
         <StatCard
-          label="Revenue this month"
-          value="—"
-          hint="Shown once orders are live"
-          icon={Settings}
+          label="Paid this month"
+          value={formatNaira(stats.paidThisMonthKobo)}
+          hint="Successful payments, before refunds"
+          icon={Wallet}
         />
       </div>
 
@@ -167,9 +183,15 @@ export default async function DashboardPage() {
               icon={ShoppingBag}
             />
             <QuickAction
+              href="/dashboard/commission"
+              title="Commission report"
+              description="Monthly builder split, with a CSV export."
+              icon={FileText}
+            />
+            <QuickAction
               href="/dashboard/settings"
               title="Store settings"
-              description="Contact details, shipping and commission."
+              description="Contact details, approval and the commission rate."
               icon={Settings}
             />
           </div>
@@ -187,6 +209,19 @@ export default async function DashboardPage() {
             )}
           </div>
           <div className="p-5">
+            {stats.needsAttention > 0 ? (
+              <Link
+                href="/dashboard/orders?attention=1"
+                className="mb-3 flex items-center justify-between gap-3 rounded-lg border border-error/40 bg-error/10 px-3 py-2.5 text-sm text-error transition-colors hover:border-error"
+              >
+                <span>
+                  {stats.needsAttention}{" "}
+                  {stats.needsAttention === 1 ? "order needs" : "orders need"}{" "}
+                  attention.
+                </span>
+                <span className="font-semibold">Review</span>
+              </Link>
+            ) : null}
             {approvalQueue.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border-strong bg-charcoal px-4 py-8 text-center">
                 <p className="text-sm text-muted">
@@ -234,13 +269,41 @@ export default async function DashboardPage() {
             View all
           </Link>
         </div>
-        <div className="px-5 py-12 text-center">
-          <ShoppingBag className="mx-auto h-7 w-7 text-muted" aria-hidden="true" />
-          <p className="mt-3 text-sm text-muted">
-            No orders yet. New online orders will appear here after payment is
-            confirmed.
-          </p>
-        </div>
+        {recentOrders.length === 0 ? (
+          <div className="px-5 py-12 text-center">
+            <ShoppingBag className="mx-auto h-7 w-7 text-muted" aria-hidden="true" />
+            <p className="mt-3 text-sm text-muted">
+              No orders yet. New online orders will appear here after payment is
+              confirmed.
+            </p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {recentOrders.map((order) => (
+              <li key={order.id}>
+                <Link
+                  href={`/dashboard/orders/${order.id}`}
+                  className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-charcoal"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-oswald text-base font-medium uppercase tracking-[0.02em] text-offwhite">
+                      {order.orderNumber}
+                    </span>
+                    <span className="block truncate text-[11px] text-muted">
+                      {order.customerName} · {orderDate(order.createdAt)}
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-3">
+                    <OrderStatusBadge status={order.status} />
+                    <span className="font-oswald text-base text-offwhite">
+                      {formatNaira(order.totalKobo)}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

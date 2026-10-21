@@ -57,9 +57,9 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [x] T21b Brevo order emails: customer receipt and seller alert after verified payment, plus the private order link. Sending is blocked until `BREVO_API_KEY` and a verified sender exist.
 
 ### Phase 5: Running orders (22 to 23 Oct)
-- [ ] T22 Partner Orders: list, filters, detail, Approve and status buttons, history. Test that no money field reaches the browser.
-- [ ] T23 Admin Orders: full detail with money, cancel, needs-attention list, expire-unpaid button.
-- [ ] T24 Admin Overview and Commission report with CSV export.
+- [x] T22 Partner Orders: list, filters, detail, Approve and status buttons, history. Test that no money field reaches the browser. Partner queries exclude unpaid orders and never select prices or payments.
+- [x] T23 Admin Orders: full detail with money, cancel, needs-attention list, expire-unpaid button. Paid status is never set by hand; only verified payment can do that.
+- [x] T24 Admin Overview and Commission report with CSV export.
 
 ### Phase 6: Launch extras (24 Oct; stop here if behind)
 - [ ] T25 Updates archive: admin posting, public `/updates`, WhatsApp Channel link in header strip and footer.
