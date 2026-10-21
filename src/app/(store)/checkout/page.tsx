@@ -4,6 +4,8 @@ import { ChevronRight, Lock } from "lucide-react";
 import { CheckoutView } from "@/components/store/CheckoutView";
 import { getShippingConfig } from "@/lib/data/shipping";
 import { getStoreSettings } from "@/lib/data/settings";
+import { getCustomerSession, listAddresses } from "@/lib/data/customers";
+import type { CheckoutPrefill } from "@/lib/checkout-types";
 
 export const dynamic = "force-dynamic";
 
@@ -14,10 +16,22 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const [shipping, settings] = await Promise.all([
+  const [shipping, settings, session] = await Promise.all([
     getShippingConfig(),
     getStoreSettings(),
+    getCustomerSession().catch(() => null),
   ]);
+
+  const addresses =
+    session?.customer ? await listAddresses(session.customer.id) : [];
+  const prefill: CheckoutPrefill | null = session?.customer
+    ? {
+        email: session.customer.email,
+        name: session.customer.fullName,
+        phone: session.customer.phone,
+        addresses,
+      }
+    : null;
 
   // Only a boolean reaches the browser. The secret key stays on the server.
   const paymentEnabled = Boolean(process.env.FLW_SECRET_KEY);
@@ -55,6 +69,7 @@ export default async function CheckoutPage() {
         shipping={shipping}
         paymentEnabled={paymentEnabled}
         whatsappNumber={settings.whatsapp_number}
+        prefill={prefill}
       />
     </div>
   );

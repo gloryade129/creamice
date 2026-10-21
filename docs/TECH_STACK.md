@@ -72,6 +72,7 @@ src/
       checkout/return/page.tsx    verifies payment on return
       order/[orderNumber]/page.tsx
       track/page.tsx
+      account/page.tsx, account/login, account/register
       updates/page.tsx, updates/[slug]/page.tsx
       (info pages: about, contact, delivery-returns, faq, privacy, terms)
     login/page.tsx
@@ -83,8 +84,10 @@ src/
       board/...              upcoming, updates
     api/
       checkout/route.ts      creates order + Flutterwave payment
+      checkout/quote/route.ts  server prices for the checkout summary
       webhooks/flutterwave/route.ts
     sitemap.ts, robots.ts, not-found.tsx, error.tsx
+  proxy.ts                   refreshes the Supabase auth cookies (Next 16 proxy)
   components/
     ui/                      Button, Input, Select, Badge, Modal, Drawer, Toast...
     store/                   Header, Footer, ProductCard, ProductGallery, CartDrawer...
@@ -93,7 +96,9 @@ src/
     supabase/                browser client, server client, admin (service role) client
     auth/                    getCurrentUser, requireRole
     data/                    ALL database reads/writes, one file per area
-    flutterwave/             createPayment, verifyTransaction, checkWebhook
+    flutterwave.ts           createPayment, verifyTransaction, checkWebhook
+    email/                   Brevo customer receipt + seller alert
+    order-token.ts           HMAC private links for guest orders
     money.ts                 kobo helpers, formatNaira, commission calc
     orders.ts                allowed status transitions
     cart/                    cart context + localStorage
@@ -107,11 +112,24 @@ Rules for structure: pages stay thin; business rules live in `lib/`; every datab
 
 ## 5. Authentication and roles
 
+### 5.1 Staff
+
 - Supabase Auth with email and password. Staff only.
 - On sign-in, server code loads the user's `profiles` row. `requireRole(['admin'])` is called at the top of every dashboard page, server action and route handler. Hiding a menu item is not security.
 - Admin creates staff accounts with the Supabase admin API (`auth.admin.createUser`, email pre-confirmed, temporary password) and inserts the `profiles` row. This avoids depending on Supabase's built-in email sending, which is heavily limited on the free plan as far as I know. The admin shares the temporary password privately (for example on WhatsApp) and the user changes it after first login.
-- Passwords: minimum 10 characters. Turn on Supabase's leaked-password protection if the plan offers it. If time allows, enable TOTP two-factor for the admin account.
+- Staff passwords: minimum 10 characters. Turn on Supabase's leaked-password protection if the plan offers it. If time allows, enable TOTP two-factor for the admin account.
 - Deactivated users (`is_active = false`) are refused even if their session is still valid.
+
+### 5.2 Customers
+
+- Customers sign up at `/account/register` with Supabase Auth. A trigger-free first read creates their `customers` row from the auth user (id, confirmed email, metadata name/phone); a unique lower-cased email index prevents duplicate accounts.
+- Customer accounts are separate from `profiles`. Signing up never grants a dashboard role, and staff can still shop with the same Supabase session.
+- Supabase Auth "Confirm email" must stay on. Order history and token-free order access require `email_confirmed_at`; turning confirmation off would let someone claim another person's guest orders (D-22).
+- Configure Supabase Auth custom SMTP with Brevo so confirmation and password-reset emails come from the verified Creamice sender, not Supabase's limited built-in mailer. Add the site URL and `/account` redirect to Supabase Auth URL Configuration, or confirmation links will not return to the site.
+- `src/proxy.ts` refreshes the auth cookies on navigation. A server component cannot write refreshed cookies, so without this the customer silently becomes a guest when the access token expires.
+- `/account`, `/account/login` and `/account/register` are `force-dynamic`; `/account` redirects signed-out visitors to sign-in with a safe `next` path. Account pages are `noindex`.
+- Every account server action starts from `getCustomerSession()` and reads the customer id from the session, never from the form. Address reads and writes are also scoped by that id.
+- `supabase/migrations/001_customer_accounts.sql` is required. If it has not run, `ensureCustomer` returns null and `/account` shows "Accounts are being set up"; guest checkout and order links keep working.
 
 Partner data safety: write `lib/data/partner-orders.ts` so it selects only `orders` columns and `order_items` columns *excluding* `unit_price_kobo`, and never touches `order_payments`. Add a test that fails if a partner order object contains any money field.
 
@@ -132,7 +150,7 @@ Read Flutterwave's current documentation before writing this code and follow it 
 1. Validate the request with zod: items (variant id, quantity), customer details, state, optional discount code.
 2. Load variants and prices from the database. Reject sold-out or inactive items. Never use a price from the browser.
 3. Work out subtotal, discount, delivery fee (state rate or default), total. Work out commission: `round(commission_rate x (subtotal - discount))`, in kobo.
-4. Insert `orders` (status `pending_payment`), `order_items` (with price snapshot), `order_payments` (status `initiated`, unique `tx_ref`, commission snapshot).
+4. Insert `orders` (status `pending_payment`), `order_items` (with price snapshot), `order_payments` (status `initiated`, unique `tx_ref`, commission snapshot). A signed-in customer's `customer_id` is stored; guest orders leave it null.
 5. Call `POST https://api.flutterwave.com/v3/payments` with the secret key as a Bearer token. Amounts to Flutterwave are in naira (kobo divided by 100). Body:
 
 ```json
@@ -169,6 +187,20 @@ Flutterwave redirects with `status`, `tx_ref`, `transaction_id` in the URL. Thes
 
 ### 6.5 Things that must be tested in Flutterwave test mode
 Successful payment, failed payment, abandoned payment, closing the page before returning (webhook must still complete the order), the webhook delivered twice, a tampered redirect URL, and the split amounts visible in the dashboard for the subaccount. Also test a payment above 10,000 NGN, because Flutterwave notes a stamp duty on larger amounts ([split payments](https://developer.flutterwave.com/docs/collecting-payments/split-payments)); confirm the builder's received amount is what is promised.
+
+### 6.6 Checkout guards
+- The checkout page shows a server quote from `/api/checkout/quote` before payment; it never displays a browser price. The quote route applies the same validation, stock, shipping and discount rules as the order route.
+- Preview-catalogue items are for design review only. They are labelled in the storefront, rejected by the quote and checkout routes, and block the pay button.
+- With no `FLW_SECRET_KEY`, checkout shows "Payment setup is in progress" and the API returns 503. No order is created and no paid state is faked.
+- If Flutterwave payment creation fails after the order is created, the order stays `pending_payment` / `initiated`; it can expire through `expire_unpaid_orders`. Never mark it paid on the client response.
+- `NEXT_PUBLIC_SITE_URL` must be the real public origin in production. It is used for the Flutterwave return URL and the private order link in emails.
+
+### 6.7 Email notifications (Brevo)
+
+- Server-only env: `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`, `SELLER_EMAIL`. The sender email or its domain must be verified in Brevo.
+- Send only after `mark_order_paid` reports a verified, first-time payment: a receipt to the customer and a new-order alert to the seller. Each includes the order number, items, total, delivery details and the private order link.
+- Email is best-effort (D-23). Catch and log failures without secrets, never fail the webhook because Brevo is down, and keep the paid order and `/order/[orderNumber]` authoritative.
+- Supabase Auth confirmation and reset emails use Brevo SMTP configured in the Supabase dashboard. They are separate from this API code and need no app env var.
 
 ## 7. Images
 

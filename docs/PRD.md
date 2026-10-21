@@ -25,26 +25,25 @@ The site follows the familiar layout of large Nigerian marketplaces such as Jumi
 
 | Role | Who | Can do | Cannot do |
 | --- | --- | --- | --- |
-| Customer | Public visitor | Browse, search, cart, check out as guest, track an order with order number and email, read public updates | Nothing private. No account at launch. |
+| Customer | Public visitor | Browse, search, cart, create an account or check out as a guest, see their order history and saved addresses, track an order with order number and email, read public updates | Own orders, addresses and email only. No staff pages. |
 | Partner | Team member managing Creamice products | Create products and edit them (price, name, description, images), update stock, see paid orders, approve (confirm) orders, move orders through fulfilment stages | See any money: totals, payments, commission, revenue. Reach admin pages. Cancel or refund. |
 | Admin | Owner | Everything: all products, approve or reject partner changes, all orders including money, cancel orders, shipping fees, discount codes, accounts, updates, settings, commission report | n/a |
 | Board member | The website builder and invited insiders | A private area showing upcoming drops and board-only updates before the public | See orders, money or manage anything |
 
-Accounts for partners, admin and board members are created by the admin (no public sign-up). There is one builder at launch.
+Staff accounts for partners, admin and board members are created by the admin (no public staff sign-up). Customers create their own account at `/account/register`; that never grants a staff role.
 
 ## 4. Scope
 
 ### Launch must-haves (P0)
-Storefront, cart, checkout with Flutterwave, automatic builder commission split, order creation and tracking, partner dashboard, admin dashboard, shipping fees set by admin, sizes and stock counts, responsive on every device, SEO basics, legal pages.
+Storefront, cart, checkout with Flutterwave, automatic builder commission split, order creation and tracking, customer accounts (with guest checkout still available), Brevo order emails, partner dashboard, admin dashboard, shipping fees set by admin, sizes and stock counts, responsive on every device, SEO basics, legal pages.
 
 ### Launch if time allows (P1, build in this order)
 1. Public Updates archive plus WhatsApp Channel link (this solves the WhatsApp complaint).
 2. Discount codes (the owner asked for these at launch).
 3. Board area (upcoming drops and board-only updates).
-4. Order confirmation email (needs a domain).
 
 ### After launch (P2)
-Customer accounts and order history, reviews, wishlist, abandoned-cart reminders, delivery tracking integration, multiple builders, reports beyond the commission report, international shipping.
+Reviews, wishlist, abandoned-cart reminders, delivery tracking integration, multiple builders, reports beyond the commission report, international shipping.
 
 ### Out of scope
 Marketplace for other sellers, loyalty points, mobile app, live chat, multi-language, multi-currency, subscriptions.
@@ -83,7 +82,7 @@ Searches product name and category. Results page uses the same grid. Handles zer
 ### 5.6 Cart
 Slide-in drawer from the header, plus a full `/cart` page. Change quantity, remove, see subtotal. Cart is kept in the browser (localStorage). Prices in the cart are refreshed from the server before checkout.
 
-### 5.7 Checkout (guest)
+### 5.7 Checkout (guest or account)
 One page, single column on mobile, two columns on desktop (form left, summary right).
 Fields: full name, email, phone, delivery address, city, state (dropdown of Nigerian states and FCT), optional delivery note, optional discount code.
 Behaviour:
@@ -92,11 +91,24 @@ Behaviour:
 - "Pay with Flutterwave" creates the order, then redirects to the Flutterwave hosted payment page.
 - The customer returns to a confirmation page showing the real, server-verified result.
 - Errors are shown next to the field, in plain words.
+- An account is optional. Signed-in customers get their name, email, phone and default saved address filled in, and can pick another saved address for this order. Every order still uses the same server-side prices, stock and delivery rules.
+- Preview-catalogue items cannot be paid for.
 
 ### 5.8 Order confirmation and tracking
-- `/order/[orderNumber]` after payment shows status and items. Visiting later requires order number and email (`/track`).
+- `/order/[orderNumber]` after payment shows status and items. The private link from checkout or `/track` opens it.
+- Signed-in customers with a confirmed email can open their own orders without the private link.
+- A customer with only the order number uses `/track`, enters the number and the email used for the order, and receives the private link.
 - Status shown to customer: Awaiting payment, Paid, Confirmed, Processing, Shipped, Delivered, Cancelled.
 - A "Contact us on WhatsApp about this order" button prefilled with the order number.
+- When a payment is verified, Brevo sends the customer a receipt and the seller a new-order alert. The on-screen page remains the source of truth if an email fails.
+
+### 5.8.1 Customer account (optional)
+- `/account/register` creates a customer account with name, email, optional phone and password. Supabase sends a confirmation email; the account must confirm it before order history appears.
+- `/account/login` signs in, then returns to the page the customer came from (checkout or account).
+- `/account` shows the customer's details, up to five saved addresses (one default) and order history for the confirmed email. It redirects to sign-in when signed out.
+- Customers can edit their name and phone, add, remove and set a default address, and sign out.
+- Account pages are `noindex`. Customer accounts are separate from staff `profiles`: signing up never grants a dashboard role.
+- These pages depend on `supabase/migrations/001_customer_accounts.sql`; until it is applied the site shows an "accounts are being set up" state and guest checkout still works.
 
 ### 5.9 Updates (the permanent archive)
 `/updates` lists public announcements, newest first, each at `/updates/[slug]`. Admin posts them from the dashboard. The WhatsApp Channel link appears at the top and in the footer. Posting an update takes the admin under a minute.

@@ -48,11 +48,13 @@ Review each result yourself before moving on. Commit after every task with a cle
 
 ### Phase 4: Checkout and payments (20 to 21 Oct)
 - [ ] T16 Admin Shipping page (default fee and per-state fees) and Settings page (store details, WhatsApp links, approval switch, commission rate, builder subaccount).
-- [ ] T17 `/api/checkout`: validate, price on the server, create order, items and payment record with commission snapshot. Tests for totals.
-- [ ] T18 Flutterwave payment creation with the split, in test mode. Redirect to the hosted page.
-- [ ] T19 Return page: verify with Flutterwave, call `mark_order_paid`, show real status.
-- [ ] T20 Webhook route with signature check and the same verification. Test idempotency.
-- [ ] T21 Order confirmation page and `/track` (order number plus email).
+- [x] T17 `/api/checkout`: validate, price on the server, create order, items and payment record with commission snapshot. Tests for totals. Quote route added so the browser shows server prices before payment.
+- [x] T18 Flutterwave payment creation with the split. Code and payload tests are in place; a real test-mode payment is still blocked on `FLW_SECRET_KEY`.
+- [x] T19 Return page: verify with Flutterwave, call `mark_order_paid`, show real status.
+- [x] T20 Webhook route with signature check and the same verification. Idempotent through `mark_order_paid`; live delivery is still blocked on `FLW_SECRET_HASH`.
+- [x] T21 Order confirmation page and `/track` (order number plus email), with private HMAC links and signed-in owner access.
+- [x] T21a Customer accounts: register, confirm email, sign in/out, profile, up to five saved addresses, prefill and address picker at checkout, order history by confirmed email. Needs `001_customer_accounts.sql` applied before it can run.
+- [x] T21b Brevo order emails: customer receipt and seller alert after verified payment, plus the private order link. Sending is blocked until `BREVO_API_KEY` and a verified sender exist.
 
 ### Phase 5: Running orders (22 to 23 Oct)
 - [ ] T22 Partner Orders: list, filters, detail, Approve and status buttons, history. Test that no money field reaches the browser.
@@ -84,9 +86,8 @@ Review each result yourself before moving on. Commit after every task with a cle
 1. T27 Board area
 2. T26 Discount codes
 3. T25 Updates archive (keep the WhatsApp Channel link in the footer)
-4. Order confirmation email
-5. Category filters beyond category, size and price
-Never cut: T17 to T21, T22, T30 to T34, T37.
+4. Category filters beyond category, size and price
+Never cut: T17 to T21, T21a, T21b, T22, T30 to T34, T37.
 
 ## Realistic warnings
 - Flutterwave live approval is outside your control. If it is not ready by 26 Oct, launch date is at risk. Start O-1 today.

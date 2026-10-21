@@ -8,6 +8,7 @@ import {
   PackageSearch,
   Search,
   ShoppingBag,
+  UserRound,
   X,
 } from "lucide-react";
 import { Drawer } from "@/components/ui/Drawer";
@@ -120,6 +121,14 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
               Track order
             </Link>
 
+            <Link
+              href="/account"
+              aria-label="Your account"
+              className="hidden h-11 w-11 items-center justify-center rounded-lg text-offwhite transition-colors hover:bg-charcoal md:inline-flex"
+            >
+              <UserRound className="h-5 w-5" aria-hidden="true" />
+            </Link>
+
             <CartLink count={cartCount} />
           </div>
         </div>
@@ -185,6 +194,20 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
                 <span aria-hidden="true" className="text-muted">→</span>
               </Link>
             ))}
+          </div>
+
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+              Account
+            </p>
+            <Link
+              href="/account"
+              onClick={() => setMenuOpen(false)}
+              className="flex min-h-[44px] items-center justify-between border-b border-border text-[15px] text-offwhite"
+            >
+              Account
+              <UserRound className="h-4 w-4 text-muted" aria-hidden="true" />
+            </Link>
           </div>
 
           <div>

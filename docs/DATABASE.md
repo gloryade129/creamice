@@ -1,6 +1,6 @@
 # Creamice: Database
 
-The source of truth is `supabase/schema.sql`. This file explains it. Run the SQL once in the Supabase SQL editor of each project (dev and prod). Later changes go in numbered files in `supabase/migrations/` (`0002_...sql`) and are never edited after they have run in production.
+The source of truth is `supabase/schema.sql`. This file explains it. Run the SQL once in the Supabase SQL editor of each project (dev and prod). Later changes go in numbered files in `supabase/migrations/` (`001_...sql`) and are never edited after they have run in production. Run migrations in order, after `schema.sql`.
 
 ## 1. Rules
 
@@ -21,11 +21,23 @@ The source of truth is `supabase/schema.sql`. This file explains it. Run the SQL
 | `product_variants` | Size, optional colour, stock | Same as products |
 | `shipping_rates` | Delivery fee per state | Public (for checkout), admin writes |
 | `discount_codes` | Percent or fixed codes with limits | Admin; checkout validates server-side |
-| `orders` | Customer, delivery details, status. No money. | Admin, partner, customer by number plus email |
+| `orders` | Customer, delivery details, status, optional `customer_id`. No money. | Admin, partner; customer through signed-in confirmed email or private order link |
 | `order_items` | Items with price snapshot | Admin (with price); partner (without price) |
 | `order_payments` | Totals, discount, shipping, commission snapshot, Flutterwave references | Admin only |
 | `order_events` | Status history | Admin, partner |
+| `customers` | Customer account linked to `auth.users`: name, unique email, phone | Server only, after a Supabase session check; the customer reads their own row |
+| `customer_addresses` | Saved delivery addresses, one default per customer, max 5 enforced in app code | Server only, scoped to the signed-in customer |
 | `updates` | Announcements archive | Public (`public` audience), board (`board`), admin writes |
+
+### 2.1 Customer accounts and order access
+
+- `supabase/migrations/001_customer_accounts.sql` creates `customers`, `customer_addresses` and a nullable `orders.customer_id`. Run it after `schema.sql`.
+- `customers.id` is the Supabase `auth.users.id`, so one auth user maps to one customer. `customers.email` is unique (lower-cased) and the id is the primary key. Signing up never writes to the staff `profiles` table.
+- RLS is on for both customer tables with no policies: the browser never reads them. Server code calls Supabase Auth, then uses the service role. Every address query is scoped by the session's `customer_id`.
+- One default address per customer is enforced by a partial unique index. The five-address limit is app code (`addAddress`), not a database rule.
+- Guest checkout does not depend on the migration. An order gets `customer_id` only when a signed-in customer checked out. `orders.customer_id` is nullable and set to null if the customer account is deleted, so order records survive.
+- Order history is read only when the Supabase email is confirmed. It includes orders with the same `customer_email` and orders linked by `customer_id`. This is why Supabase Auth "Confirm email" must stay on (D-22).
+- Private order links use an HMAC token (`lib/order-token.ts`) built from the order number and `ORDER_LINK_SECRET` (or the service role key as fallback). `/track` exchanges order number plus email for that link. The token is never stored in the database.
 
 ## 3. Product status values
 
@@ -70,8 +82,9 @@ All three are callable only by the service role.
 - `shipping_rates`: one row for each of the 36 states and the FCT, all set to the default fee until admin edits them. (The owner said admin will configure fees.)
 - `store_settings`: leave `commission_rate` at 0.2000. Leave `builder_subaccount_id` empty until the owner has it.
 - Create the first admin by hand: add the user in Supabase Auth, then insert a `profiles` row with role `admin`.
+- Customer accounts: run `supabase/migrations/001_customer_accounts.sql` after `schema.sql`. Keep Supabase Auth "Confirm email" on.
 - Sizes used by default: S, M, L, XL, XXL (partners can add others).
 
 ## 7. Weekly backup (free plan has none)
 
-Until the project moves to a paid plan, export `orders`, `order_items`, `order_payments`, `products`, `product_variants`, `discount_codes`, `updates` as CSV from the Supabase dashboard every week and store them somewhere other than the repo. Also keep the Flutterwave transaction export.
+Until the project moves to a paid plan, export `orders`, `order_items`, `order_payments`, `products`, `product_variants`, `discount_codes`, `updates`, `customers` and `customer_addresses` as CSV from the Supabase dashboard every week and store them somewhere other than the repo. Also keep the Flutterwave transaction export.
