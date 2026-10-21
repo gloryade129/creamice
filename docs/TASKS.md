@@ -47,7 +47,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [x] T15 Cart: context with localStorage, drawer, `/cart` page.
 
 ### Phase 4: Checkout and payments (20 to 21 Oct)
-- [ ] T16 Admin Shipping page (default fee and per-state fees) and Settings page (store details, WhatsApp links, approval switch, commission rate, builder subaccount).
+- [x] T16 Admin Shipping page (default fee and per-state fees) and Settings page (store details, WhatsApp links, approval switch, commission rate, builder subaccount).
 - [x] T17 `/api/checkout`: validate, price on the server, create order, items and payment record with commission snapshot. Tests for totals. Quote route added so the browser shows server prices before payment.
 - [x] T18 Flutterwave payment creation with the split. Code and payload tests are in place; a real test-mode payment is still blocked on `FLW_SECRET_KEY`.
 - [x] T19 Return page: verify with Flutterwave, call `mark_order_paid`, show real status.

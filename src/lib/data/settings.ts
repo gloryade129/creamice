@@ -58,3 +58,33 @@ export async function getStoreSettings(): Promise<StoreSettings> {
     return DEFAULT_SETTINGS;
   }
 }
+
+export interface StoreSettingsUpdate {
+  store_name: string;
+  whatsapp_number: string | null;
+  whatsapp_channel_url: string | null;
+  support_email: string | null;
+  require_product_approval: boolean;
+  commission_rate: number;
+  builder_subaccount_id: string | null;
+}
+
+// Admin-only write. The caller has already checked the role and validated
+// every field; this function only talks to the database.
+export async function updateStoreSettings(
+  input: StoreSettingsUpdate
+): Promise<boolean> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("store_settings")
+    .update(input)
+    .eq("id", true)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("[settings] Could not update store settings.");
+    return false;
+  }
+  return true;
+}

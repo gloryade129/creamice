@@ -1,14 +1,28 @@
 import { requireRole } from "@/lib/auth/session";
+import { getStoreSettings } from "@/lib/data/settings";
+import { getShippingRatesForAdmin } from "@/lib/data/shipping";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { ShippingForm } from "@/components/dashboard/ShippingForm";
 
 export default async function ShippingPage() {
   await requireRole(["admin"]);
 
+  const [settings, rates] = await Promise.all([
+    getStoreSettings(),
+    getShippingRatesForAdmin(),
+  ]);
+
   return (
     <div>
-      <h1 className="font-oswald font-semibold text-2xl uppercase tracking-[0.02em] mb-4">
-        Shipping
-      </h1>
-      <p className="text-muted">Shipping settings coming soon.</p>
+      <PageHeader
+        eyebrow="Admin"
+        title="Shipping"
+        description="The fee charged for each state at checkout. Saving a fee makes that state active for new orders."
+      />
+      <ShippingForm
+        rates={rates}
+        defaultFeeKobo={settings.default_shipping_fee_kobo}
+      />
     </div>
   );
 }
