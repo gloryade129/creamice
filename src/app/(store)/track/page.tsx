@@ -7,6 +7,16 @@ import { getStoreSettings } from "@/lib/data/settings";
 export const metadata: Metadata = {
   title: "Track your order",
   description: "Find your Creamice order with your order number and email.",
+  alternates: { canonical: "/track" },
+  openGraph: {
+    title: "Track your order | Creamice",
+    description: "Find your Creamice order with your order number and email.",
+    url: "/track",
+    siteName: "Creamice",
+    locale: "en_NG",
+    type: "website",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default async function TrackPage({

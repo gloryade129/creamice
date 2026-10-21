@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Create an account",
   description: "Create a Creamice account for order history and saved addresses.",
+  robots: { index: false, follow: false },
 };
 
 function safeNext(value: string | string[] | undefined): string {

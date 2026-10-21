@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Oswald, Montserrat } from "next/font/google";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -17,6 +18,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Creamice — Nigerian streetwear",
     template: "%s | Creamice",
@@ -30,6 +32,14 @@ export const metadata: Metadata = {
       "Shop hoodies, sweatshirts, joggers and more. Delivered across Nigeria.",
     siteName: "Creamice",
     type: "website",
+    locale: "en_NG",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: "Creamice — Nigerian streetwear",
+    description:
+      "Shop hoodies, sweatshirts, joggers and more. Delivered across Nigeria.",
   },
 };
 

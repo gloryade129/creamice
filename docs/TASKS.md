@@ -67,7 +67,7 @@ Review each result yourself before moving on. Commit after every task with a cle
 - [ ] T27 Board area: upcoming products, board-only updates.
 
 ### Phase 7: Quality (25 to 26 Oct)
-- [ ] T28 SEO: metadata, Open Graph, sitemap, robots, canonical URLs.
+- [x] T28 SEO: metadata, Open Graph, sitemap, robots, canonical URLs. Preview products are `noindex` and excluded from the sitemap; branded 404 and error pages added.
 - [ ] T29 Information pages with the owner's real text.
 - [ ] T30 Responsive pass at 320, 360, 390, 768, 1024, 1440. Fix every overflow.
 - [ ] T31 Performance pass: Lighthouse mobile on home, listing, product; image sizes; bundle size.

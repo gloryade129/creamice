@@ -271,6 +271,31 @@ export async function getHomeCatalogue(): Promise<{
   };
 }
 
+// The sitemap must only contain real, live products. The storefront falls
+// back to demo products when the database is empty, and those preview slugs
+// must never be submitted to search engines.
+export async function getSitemapProducts(): Promise<
+  { slug: string; updatedAt: string }[]
+> {
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("slug, updated_at")
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
+      .limit(5000);
+
+    if (error || !data) return [];
+    return (data as { slug: string; updated_at: string }[]).map((row) => ({
+      slug: row.slug,
+      updatedAt: row.updated_at,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export function isSoldOut(product: StorefrontProduct): boolean {
   return product.variants.every((variant) => variant.stock <= 0);
 }

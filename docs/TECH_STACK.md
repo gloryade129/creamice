@@ -229,7 +229,13 @@ React context plus localStorage, wrapped in try/catch (storage can be unavailabl
 
 ## 9. SEO and sharing
 
-`generateMetadata` on every page; Open Graph image per product; `app/sitemap.ts` lists products, categories and updates; `app/robots.ts` blocks `/dashboard` and `/api`; JSON-LD `Product` on product pages; canonical URLs; filters that change listings use query strings and canonical points to the base page.
+`NEXT_PUBLIC_SITE_URL` is the canonical origin for `metadataBase`, canonicals, the sitemap and robots. Each indexable page sets its own canonical; filter and search query strings on `/shop` canonicalise to `/shop`.
+
+`app/sitemap.ts` lists the static public pages, real active products and published public updates, and revalidates hourly. It never includes demo products or private routes. `app/robots.ts` blocks dashboard, account, cart, checkout, order, API, staff login and styleguide; those pages also send `noindex`.
+
+Product pages emit `Product` JSON-LD only when the product is real. Demo products are `noindex`, have no canonical and emit no structured data. Real product pages use the first product image for Open Graph; every other page falls back to the typographic `/opengraph-image` card generated with `next/og`.
+
+Branded `not-found` and `error` screens include a shop search form. Any future page that creates a new public URL must also be added to the sitemap and given a canonical.
 
 ## 10. Environments
 

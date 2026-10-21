@@ -2,8 +2,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Styleguide | Creamice",
+  title: "Styleguide",
   description: "Design system reference",
+  robots: { index: false, follow: false },
 };
 
 const colors = [

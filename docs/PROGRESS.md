@@ -3,6 +3,15 @@
 Newest entry first. After each task, add: date, task number, what changed, what is left, anything the owner must do.
 
 ## 2026-10-21
+- T28 SEO, sharing and branded error pages:
+  - Origin: `lib/site.ts` reads `NEXT_PUBLIC_SITE_URL`, trims trailing slashes and falls back to `http://localhost:3000`. The root layout now sets `metadataBase`, a title template, Open Graph locale/URL and a Twitter card. Every indexable page sets its own canonical; shop filters canonicalise to `/shop`, not each query string.
+  - Sharing: a typographic 1200 x 630 `/opengraph-image` card is generated with `next/og`, so home, shop, updates and track have a preview image before the owner supplies artwork. Product pages use the first product photo when one exists.
+  - Sitemap: `/sitemap.xml` lists home, shop, updates, track, real active products and published public updates, and revalidates hourly. Demo products are excluded because the storefront falls back to demo data when the database is empty.
+  - Crawl rules: `/robots.txt` blocks dashboard, account, cart, checkout, order, API, staff login and styleguide. Private and utility pages are also `noindex`. Demo products are `noindex` and emit no `Product` JSON-LD, so preview data cannot be indexed as real stock. Real product JSON-LD uses the canonical absolute URL.
+  - Error pages: branded 404 and error screens with a shop search form, home link and 44 px targets. Fixed the search input collapsing on phones: `flex-1` was acting on the column height below 640 px; it is now width-only on small screens.
+  - Checks: typecheck, lint (0 problems), 150 Vitest tests and production build pass. Fetched `/robots.txt`, `/sitemap.xml`, home, shop, updates, track, login, cart, styleguide and a missing route; canonicals, `noindex` and 404 status are correct. The demo product is `noindex`, has no canonical and no JSON-LD. The OG route returns a 45 KB PNG; shop, updates, track and product metadata include an image.
+  - Owner must: set `NEXT_PUBLIC_SITE_URL` to the final domain in the host settings before deploy. Without it canonical links, the sitemap and robots point at localhost. Replace the typographic social card with campaign artwork when available.
+  - Next: T29 information pages need the owner's real copy; T30 to T33 quality passes can run now.
 - T25 public updates archive and admin posting:
   - Admin: `/dashboard/updates` lists public posts with draft/published status; `/dashboard/updates/new` and `/dashboard/updates/[id]` create and edit. Publishing, unpublishing and editing are separate actions with role checks, zod validation and revalidation. Drafts never reach the storefront.
   - Slugs: generated on the server from the title (`lib/updates.ts`), de-duplicated with a numeric suffix, and kept stable when a post is edited. A published post keeps its first publication date if it is unpublished and later re-published.

@@ -13,6 +13,7 @@ import {
   isSoldOut,
 } from "@/lib/data/storefront";
 import { formatNaira } from "@/lib/money";
+import { absoluteUrl } from "@/lib/site";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { ProductPurchase } from "@/components/store/ProductPurchase";
 import { ProductCard } from "@/components/store/ProductCard";
@@ -29,16 +30,26 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const { product } = await getStorefrontProduct(slug);
-  if (!product) return { title: "Product not found" };
+  const { product, usingDemo } = await getStorefrontProduct(slug);
+  if (!product) {
+    return { title: "Product not found", robots: { index: false, follow: false } };
+  }
+
+  const description = product.description.slice(0, 160);
 
   return {
     title: product.name,
-    description: product.description.slice(0, 160),
+    description,
+    // Preview products are not real stock and must never be indexed.
+    robots: usingDemo ? { index: false, follow: false } : undefined,
+    alternates: usingDemo ? undefined : { canonical: `/product/${product.slug}` },
     openGraph: {
       title: `${product.name} | Creamice`,
-      description: product.description.slice(0, 160),
-      images: product.images[0]?.url ? [product.images[0].url] : undefined,
+      description,
+      url: `/product/${product.slug}`,
+      images: product.images[0]?.url
+        ? [product.images[0].url]
+        : ["/opengraph-image"],
     },
   };
 }
@@ -51,8 +62,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   const soldOut = isSoldOut(product);
   const onSale = isOnSale(product);
-  const shareText = encodeURIComponent(`${product.name} — Creamice`);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const shareText = encodeURIComponent(`${product.name} - Creamice`);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +78,7 @@ export default async function ProductPage({ params }: PageProps) {
       availability: soldOut
         ? "https://schema.org/OutOfStock"
         : "https://schema.org/InStock",
-      url: siteUrl ? `${siteUrl}/product/${product.slug}` : undefined,
+      url: absoluteUrl(`/product/${product.slug}`),
     },
   };
 
@@ -76,11 +86,13 @@ export default async function ProductPage({ params }: PageProps) {
     <div>
       {usingDemo && <PreviewNotice />}
 
-      <script
-        type="application/ld+json"
-        // JSON.stringify escapes the values; no user HTML is interpolated here.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {!usingDemo ? (
+        <script
+          type="application/ld+json"
+          // JSON.stringify escapes the values; no user HTML is interpolated here.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      ) : null}
 
       <div className="container-page py-6 md:py-10">
         <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-1 text-xs text-muted">

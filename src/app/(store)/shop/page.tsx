@@ -16,6 +16,17 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Shop",
   description: "Shop Creamice hoodies, sweatshirts, joggers, sweatpants and more.",
+  alternates: { canonical: "/shop" },
+  openGraph: {
+    title: "Shop | Creamice",
+    description:
+      "Shop Creamice hoodies, sweatshirts, joggers, sweatpants and more.",
+    url: "/shop",
+    siteName: "Creamice",
+    locale: "en_NG",
+    type: "website",
+    images: ["/opengraph-image"],
+  },
 };
 
 type SearchParams = Record<string, string | string[] | undefined>;

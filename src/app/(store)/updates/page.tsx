@@ -12,6 +12,16 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Updates",
   description: "Creamice drop news and store announcements, newest first.",
+  alternates: { canonical: "/updates" },
+  openGraph: {
+    title: "Updates | Creamice",
+    description: "Creamice drop news and store announcements, newest first.",
+    url: "/updates",
+    siteName: "Creamice",
+    locale: "en_NG",
+    type: "website",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default async function UpdatesArchivePage() {

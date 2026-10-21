@@ -19,9 +19,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const update = await getPublicUpdate(slug);
   if (!update) return { title: "Update not found" };
 
+  const description = excerptFromBody(update.body, 155);
+
   return {
     title: update.title,
-    description: excerptFromBody(update.body, 155),
+    description,
+    alternates: { canonical: `/updates/${update.slug}` },
+    openGraph: {
+      title: `${update.title} | Creamice`,
+      description,
+      url: `/updates/${update.slug}`,
+      siteName: "Creamice",
+      locale: "en_NG",
+      type: "article",
+      publishedTime: update.publishedAt,
+      images: ["/opengraph-image"],
+    },
   };
 }
 

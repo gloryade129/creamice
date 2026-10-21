@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -24,6 +25,10 @@ import {
 } from "@/components/store/SectionHeading";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const categoryIcons = {
   hoodies: Shirt,
